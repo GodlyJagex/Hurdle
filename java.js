@@ -32,38 +32,12 @@ function compare() {
 		}
 	}
 	for (i=0;i<5;i++){
-		if(Answer[i]==Input[0] && Spotted[i] != 1 && Checked[0] != 1){
-			Incorrect+=1;
-			Spotted[i]=1;
-			Checked[0]=1;
-		}
-	}
-	for (i=0;i<5;i++){
-		if(Answer[i]==Input[1] && Spotted[i] != 1 && Checked[1] != 1){
-			Incorrect+=1;
-			Spotted[i]=1;
-			Checked[1]=1;
-		}
-	}
-	for (i=0;i<5;i++){
-		if(Answer[i]==Input[2] && Spotted[i] != 1 && Checked[2] != 1){
-			Incorrect+=1;
-			Spotted[i]=1;
-			Checked[2]=1;
-		}
-	}
-	for (i=0;i<5;i++){
-		if(Answer[i]==Input[3] && Spotted[i] != 1 && Checked[3] != 1){
-			Incorrect+=1;
-			Spotted[i]=1;
-			Checked[3]=1;
-		}
-	}
-	for (i=0;i<5;i++){
-		if(Answer[i]==Input[4] && Spotted[i] != 1 && Checked[4] != 1){
-			Incorrect+=1;
-			Spotted[i]=1;
-			Checked[4]=1;
+		for (j=0;j<5;j++)
+			if(Answer[i]==Input[j] && Spotted[i] != 1 && Checked[j] != 1){
+				Incorrect+=1;
+				Spotted[i]=1;
+				Checked[0]=1;
+			}
 		}
 	}
 	returnText();
