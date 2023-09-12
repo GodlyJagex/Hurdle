@@ -36,7 +36,7 @@ function compare() {
 			if(Answer[i]==Input[j] && Spotted[i] != 1 && Checked[j] != 1){
 				Incorrect+=1;
 				Spotted[i]=1;
-				Checked[0]=1;
+				Checked[j]=1;
 			}
 		}
 	}
