@@ -29,20 +29,19 @@ function compare() {
 			Correct+=1;
 			Spotted[i]=1;
 			Checked[i]=1;
-		} else {
-			for (j=0;j<5;j++)
-				if(Answer[i]==Input[j] && Spotted[i] != 1 && Checked[j] != 1){
-					Incorrect+=1;
-					Spotted[i]=1;
-					Checked[j]=1;
-				}
+		}
+	}
+	for (i=0;i<5;i++){
+		for (j=0;j<5;j++)
+			if(Answer[i]==Input[j] && Spotted[i] != 1 && Checked[j] != 1){
+				Incorrect+=1;
+				Spotted[i]=1;
+				Checked[j]=1;
 			}
-			
 		}
 	}
 	returnText();
 }
-
 function returnText() {
 
 	var table = document.getElementById("table");
