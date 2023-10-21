@@ -684,57 +684,57 @@ document.addEventListener('keydown', function(event) {
 	}
 	if (Input.length < 5) {
 		if (event.keyCode == 65) {
-			document.getElementById("userInput").value += "a";
+			document.getElementById("userInput").value += "A";
 		} else if (event.keyCode == 66) {
-			document.getElementById("userInput").value += "b";
+			document.getElementById("userInput").value += "B";
 		} else if (event.keyCode == 67) {
-			document.getElementById("userInput").value += "c";
+			document.getElementById("userInput").value += "C";
 		} else if (event.keyCode == 68) {
-			document.getElementById("userInput").value += "d";
+			document.getElementById("userInput").value += "D";
 		} else if (event.keyCode == 69) {
-			document.getElementById("userInput").value += "e";
+			document.getElementById("userInput").value += "E";
 		} else if (event.keyCode == 70) {
-			document.getElementById("userInput").value += "f";
+			document.getElementById("userInput").value += "F";
 		} else if (event.keyCode == 71) {
-			document.getElementById("userInput").value += "g";
+			document.getElementById("userInput").value += "G";
 		} else if (event.keyCode == 72) {
-			document.getElementById("userInput").value += "h";
+			document.getElementById("userInput").value += "H";
 		} else if (event.keyCode == 73) {
-			document.getElementById("userInput").value += "i";
+			document.getElementById("userInput").value += "I";
 		} else if (event.keyCode == 74) {
-			document.getElementById("userInput").value += "j";
+			document.getElementById("userInput").value += "J";
 		} else if (event.keyCode == 75) {
-			document.getElementById("userInput").value += "k";
+			document.getElementById("userInput").value += "K";
 		} else if (event.keyCode == 76) {
-			document.getElementById("userInput").value += "l";
+			document.getElementById("userInput").value += "L";
 		} else if (event.keyCode == 77) {
-			document.getElementById("userInput").value += "m";
+			document.getElementById("userInput").value += "M";
 		} else if (event.keyCode == 78) {
-			document.getElementById("userInput").value += "n";
+			document.getElementById("userInput").value += "N";
 		} else if (event.keyCode == 79) {
-			document.getElementById("userInput").value += "o";
+			document.getElementById("userInput").value += "O";
 		} else if (event.keyCode == 80) {
-			document.getElementById("userInput").value += "p";
+			document.getElementById("userInput").value += "P";
 		} else if (event.keyCode == 81) {
-			document.getElementById("userInput").value += "q";
+			document.getElementById("userInput").value += "Q";
 		} else if (event.keyCode == 82) {
-			document.getElementById("userInput").value += "r";
+			document.getElementById("userInput").value += "R";
 		} else if (event.keyCode == 83) {
-			document.getElementById("userInput").value += "s";
+			document.getElementById("userInput").value += "S";
 		} else if (event.keyCode == 84) {
-			document.getElementById("userInput").value += "t";
+			document.getElementById("userInput").value += "T";
 		} else if (event.keyCode == 85) {
-			document.getElementById("userInput").value += "u";
+			document.getElementById("userInput").value += "U";
 		} else if (event.keyCode == 86) {
-			document.getElementById("userInput").value += "v";
+			document.getElementById("userInput").value += "V";
 		} else if (event.keyCode == 87) {
-			document.getElementById("userInput").value += "w";
+			document.getElementById("userInput").value += "W";
 		} else if (event.keyCode == 88) {
-			document.getElementById("userInput").value += "x";
+			document.getElementById("userInput").value += "X";
 		} else if (event.keyCode == 89) {
-			document.getElementById("userInput").value += "y";
+			document.getElementById("userInput").value += "Y";
 		} else if (event.keyCode == 90) {
-			document.getElementById("userInput").value += "z";
+			document.getElementById("userInput").value += "Z";
 		}
 	}
 
