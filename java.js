@@ -561,7 +561,6 @@ function PlayerInput() {
 	var InputLower = Input.toLowerCase();
 	if (Input.length < 5) {
 		document.getElementById("userInput").value = "Invalid Word";
-		return;
 	} else if (wordList.includes(InputLower)) {
 		compare();
 	} else {
@@ -657,6 +656,7 @@ function returnText() {
 	table.children[0].appendChild(row);
 	Correct = 0;
 	Incorrect = 0;
+	document.getElementById("userInput").value = "Invalid Word";
 };
 
 function Cheat() {
