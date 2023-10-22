@@ -1,5 +1,5 @@
 //Wordlist
-var wordList = ['aahed', 'aalii', 'aargh', 'abaca', 'abaci', 'aback', 'abaft', 'abaka', 'abamp', 'abase', 'abash', 'abate', 'abaya', 'abbas', 'abbes', 'abbey',
+const wordList = ['aahed', 'aalii', 'aargh', 'abaca', 'abaci', 'aback', 'abaft', 'abaka', 'abamp', 'abase', 'abash', 'abate', 'abaya', 'abbas', 'abbes', 'abbey',
 	'abbot', 'abeam', 'abele', 'abets', 'abhor', 'abide', 'abled', 'abler', 'ables', 'abmho', 'abode', 'abohm', 'aboil', 'aboma', 'aboon', 'abort', 'about',
 	'above', 'abris', 'abuse', 'abuts', 'abuzz', 'abyes', 'abysm', 'abyss', 'acais', 'acari', 'acerb', 'aceta', 'ached', 'aches', 'achoo', 'acids', 'acidy',
 	'acing', 'acini', 'ackee', 'acmes', 'acmic', 'acned', 'acnes', 'acock', 'acold', 'acorn', 'acred', 'acres', 'acrid', 'acros', 'acted', 'actin', 'actor',
@@ -551,20 +551,25 @@ var wordList = ['aahed', 'aalii', 'aargh', 'abaca', 'abaci', 'aback', 'abaft', '
 	'zebus', 'zedas', 'zeins', 'zendo', 'zerks', 'zeros', 'zests', 'zesty', 'zetas', 'zibet', 'zilch', 'zills', 'zinco', 'zincs', 'zincy', 'zineb', 'zines',
 	'zings', 'zingy', 'zinky', 'zippo', 'zippy', 'ziram', 'zitis', 'zizit', 'zlote', 'zloty', 'zoeae', 'zoeal', 'zoeas', 'zombi', 'zonae', 'zonal', 'zoned',
 	'zoner', 'zones', 'zonks', 'zooey', 'zooid', 'zooks', 'zooms', 'zoons', 'zooty', 'zoril', 'zoris', 'zouks', 'zowee', 'zowie', 'zuppa', 'zuzim', 'zymes'];
-const Answer = wordList[Math.floor(Math.random() * wordList.length)].toUpperCase();
-var Input;
+const Answer = wordList[Math.floor(Math.random() * wordList.length)];
+var Input = "";
 var Correct = 0;
 var Incorrect = 0;
+
+var isRow = 0;
+var rowCount = 0;
 
 function PlayerInput() {
 	Input = document.getElementById('userInput').value.toString();
 	var InputLower = Input.toLowerCase();
 	if (Input.length < 5) {
 		document.getElementById("userInput").value = "Invalid Word";
+		return;
 	} else if (wordList.includes(InputLower)) {
 		compare();
 	} else {
 		document.getElementById("userInput").value = "Invalid Word";
+		return;
 	}
 }
 
@@ -666,75 +671,29 @@ function Cheat() {
 		NewHtml = '<a href="https://en.wiktionary.org/wiki/' + Answer + '">' + Answer + '</a>';
 		document.getElementById("title").innerHTML = NewHtml.toLowerCase();
 	}
-
 };
-
 function trim() {
 	var test1 = document.getElementById("userInput").value;
 	test1 = test1.slice(0, -1);
 	document.getElementById("userInput").value = test1;
 }
-document.addEventListener('keydown', function(event) {
-	Input = document.getElementById('userInput').value.toString();
-	if (event.keyCode == 13) {
-		PlayerInput();
-	}
-	if (event.keyCode == 8) {
+document.addEventListener(
+	"keyup",(event) => 
+	{const keyName = event.key;
+	Input = document.getElementById("userInput").value;
+	if (keyName == "Backspace"){
 		trim();
 	}
-	if (Input.length < 5) {
-		if (event.keyCode == 65) {
-			document.getElementById("userInput").value += "A";
-		} else if (event.keyCode == 66) {
-			document.getElementById("userInput").value += "B";
-		} else if (event.keyCode == 67) {
-			document.getElementById("userInput").value += "C";
-		} else if (event.keyCode == 68) {
-			document.getElementById("userInput").value += "D";
-		} else if (event.keyCode == 69) {
-			document.getElementById("userInput").value += "E";
-		} else if (event.keyCode == 70) {
-			document.getElementById("userInput").value += "F";
-		} else if (event.keyCode == 71) {
-			document.getElementById("userInput").value += "G";
-		} else if (event.keyCode == 72) {
-			document.getElementById("userInput").value += "H";
-		} else if (event.keyCode == 73) {
-			document.getElementById("userInput").value += "I";
-		} else if (event.keyCode == 74) {
-			document.getElementById("userInput").value += "J";
-		} else if (event.keyCode == 75) {
-			document.getElementById("userInput").value += "K";
-		} else if (event.keyCode == 76) {
-			document.getElementById("userInput").value += "L";
-		} else if (event.keyCode == 77) {
-			document.getElementById("userInput").value += "M";
-		} else if (event.keyCode == 78) {
-			document.getElementById("userInput").value += "N";
-		} else if (event.keyCode == 79) {
-			document.getElementById("userInput").value += "O";
-		} else if (event.keyCode == 80) {
-			document.getElementById("userInput").value += "P";
-		} else if (event.keyCode == 81) {
-			document.getElementById("userInput").value += "Q";
-		} else if (event.keyCode == 82) {
-			document.getElementById("userInput").value += "R";
-		} else if (event.keyCode == 83) {
-			document.getElementById("userInput").value += "S";
-		} else if (event.keyCode == 84) {
-			document.getElementById("userInput").value += "T";
-		} else if (event.keyCode == 85) {
-			document.getElementById("userInput").value += "U";
-		} else if (event.keyCode == 86) {
-			document.getElementById("userInput").value += "V";
-		} else if (event.keyCode == 87) {
-			document.getElementById("userInput").value += "W";
-		} else if (event.keyCode == 88) {
-			document.getElementById("userInput").value += "X";
-		} else if (event.keyCode == 89) {
-			document.getElementById("userInput").value += "Y";
-		} else if (event.keyCode == 90) {
-			document.getElementById("userInput").value += "Z";
-		}
+	if (keyName == "Enter"){
+		PlayerInput();
 	}
-});
+	if (/^[a-z]$/i.test(event.key) & Input.length < 5) {
+			document.getElementById("userInput").value += keyName;
+			return;
+	}
+	if (keyName == "Shift"){
+		Cheat();
+	}
+	},
+	false,
+);
