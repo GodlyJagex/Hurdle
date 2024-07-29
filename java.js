@@ -136,7 +136,7 @@ function trim() {
 function editRow()
 {
 	if (Correct=5){
-		document.getElementById(rowclass).innerHTML = "<td class="Green">"+Input.charAt(0)+"</td><td class="Green">"+Input.charAt(1)+"</td><td class="Green">"+Input.charAt(2)+"</td><td class="Green">"+Input.charAt(3)+"</td><td class="Green">"+Input.charAt(4)+"</td>"
+		document.getElementById(rowclass).innerHTML = "<td class="Green">"+Input.charAt(0)+"</td><td class="Green">"+Input.charAt(1)+"</td><td class="Green">"+Input.charAt(2)+"</td><td class="Green">"+Input.charAt(3)+"</td><td class="Green">"+Input.charAt(4)+"</td><td class=Green>"+Correct+"</td><td class=Yellow>"+Incorrect+"</td>""
 		return
 	}
 	var rowclass = "row" + rownumber;
