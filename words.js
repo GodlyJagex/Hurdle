@@ -6578,6 +6578,8 @@ const wordList =[
 'reiki',
 'reink',
 'reins',
+'reism',
+'reist',
 'reive',
 'rejig',
 'rekey',
