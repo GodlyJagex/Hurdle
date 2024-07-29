@@ -29,7 +29,6 @@ function Init(){
 	var td6 = document.createElement("td");
 	var td7 = document.createElement("td");
 
-	td5.;
 	td6.classList.add("Green");
 	td7.classList.add("Yellow");
 
