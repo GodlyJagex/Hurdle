@@ -5,7 +5,7 @@ const Answer = wordList[Math.floor(Math.random() * wordList.length)];
 var Input = "";
 var Correct = 0;
 var Incorrect = 0;
-var rownumber = 1;
+var rownumber = 0;
 var cellnumber = 1;
 
 //Create Table On Load
