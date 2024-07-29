@@ -62,9 +62,6 @@ document.addEventListener(
 			Input += keyName;
 			editRow();
 	}
-	if (keyName == "Shift"){
-		Cheat();
-	}
 	},
 	false,
 );
