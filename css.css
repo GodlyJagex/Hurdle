@@ -42,5 +42,5 @@ td .content {
     font-weight: bold;
 }
 .SpacingRight {
-	padding:0 15px 0 15px;
+	border-right: 15px;
 }
