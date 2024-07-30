@@ -41,3 +41,6 @@ td .content {
     color: green;
     font-weight: bold;
 }
+.SpacingRight {
+	padding:0 15px 0 15px;
+}
