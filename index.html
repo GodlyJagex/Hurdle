@@ -1,10 +1,66 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <table>
-        <tr>
-            
-        </tr>
-    </table>
+    <style>
+        body {
+            background-color: coral;
+        }
+        .table_component {
+            overflow: auto;
+            width: 100%;
+        }
+        
+        .table_component table {
+            border: 1px solid #dededf;
+            height: 100%;
+            width: 25%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            border-spacing: 1px;
+            text-align: center;
+        }
+        
+        .table_component caption {
+            caption-side: top;
+            text-align: center;
+        }
+        
+        .table_component th {
+            border: 1px solid #dededf;
+            background-color: #eceff1;
+            color: #000000;
+            padding: 5px;
+        }
+        
+        .table_component td {
+            border: 1px solid #dededf;
+            background-color: #ffffff;
+            color: #000000;
+            padding: 5px;
+        }
+        </style>
+        <h1>these games do not save progression, if you refresh or close progress will be lost</h1>
+        <div class="table_component" role="region" tabindex="0">
+        <table>
+            <tbody>
+                <tr>
+                    <td><a href="/Hurdle/index.html" target="_blank" rel="noopener noreferrer">Hurdle</a></td>
+                </tr>
+                <tr>
+                    <td><a href="/Grid/Home.html" target="_blank" rel="noopener noreferrer">Grid Game</a></td>
+                </tr>
+                <tr>
+                    <td><a href="/BossFight/BossFight.html" target="_blank" rel="noopener noreferrer">BossFight</a></td>
+                </tr>
+                <tr>
+                    <td><a href="/OpenWorld/IdleGame.html" target="_blank" rel="noopener noreferrer">IdleGame</a></td>
+                </tr>
+                <tr>
+                    <td><a href="/Terrible Game/TerribleGame.html" target="_blank" rel="noopener noreferrer">Terrible Game</a></td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="margin-top:8px">Made with <a href="https://www.htmltables.io/" target="_blank">HTML Tables</a></div>
+        </div>
   </body>
 </html>
