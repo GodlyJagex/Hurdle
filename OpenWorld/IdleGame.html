@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Open World</title>
+<style type="text/css">
+body,td,th {
+	color: #CCC;
+}
+body {
+	background-color: #333;
+}
+a:link {
+	text-decoration: none;
+	color: #093;
+}
+a:visited {
+	text-decoration: none;
+	color: #093;
+}
+a:hover {
+	text-decoration: none;
+	color: #093;
+}
+a:active {
+	text-decoration: none;
+	color: #093;
+}
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 1px;
+    padding: 5px 0;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+	margin-left: - 15;
+	margin-top: -15;
+}
+.Acheivement {
+	color: #000;
+	background-color: #0C0;
+}
+.hidden {
+     display: none;
+}
+.visible {
+     display: block;
+}
+.divider{
+    width:25px;
+}
+</style>
+
+</head>
+
+<body>
+<script>
+var S1 = 0;
+var S2 = 0;
+var S3 = 0;
+var S4 = 0;
+var S5 = 0;
+var S6 = 0;
+var M = 0;
+var C = 0;
+var R = 0;
+var X = 1;
+function name() {
+    var person = prompt("Please enter your name", "");
+    	if (person != null) {
+        	document.getElementById("name").innerHTML =
+        	"Name: " + person + "";
+			n1 += 1;
+    	}		
+}
+function X1() {
+	X = 1;
+	document.getElementById("X").innerHTML = X;
+}
+function X10() {
+	X = 10;
+	document.getElementById("X").innerHTML = X;
+}
+function X100() {
+	X = 100;
+	document.getElementById("X").innerHTML = X;
+}
+function X1000() {
+	X = 1000;
+	document.getElementById("X").innerHTML = X;
+}
+function Click() {
+	M += 1;
+	C += 1;
+    document.getElementById("money").innerHTML = M;
+	document.getElementById("clicks").innerHTML = C;
+};
+function Stall1() {
+	if (M >= X * 25) {
+        M -= X * 25;
+		S1 += X;
+		document.getElementById("money").innerHTML = M;
+		document.getElementById("store1").innerHTML = S1;
+	};
+};
+function Cart1() {
+	if (M >= 250 * X) {
+		M -= 250 * X;
+		S2 += X;
+		document.getElementById("money").innerHTML = M;
+		document.getElementById("store2").innerHTML = S2;
+	};
+};
+function Small1() {                                                             
+	if (M >= 2500 * X) {
+        M -= 2500 * X;
+		S3 += X;
+		document.getElementById("money").innerHTML = M;
+		document.getElementById("store3").innerHTML = S3;
+	};
+};
+function Mart1() {
+	if (M >= 10000 * X) {
+		M -= 10000 * X;
+		S4 += X;
+		document.getElementById("money").innerHTML = M;
+		document.getElementById("store4").innerHTML = S4;
+	};
+};
+function Factory1() {
+	if (M >= 25000 * X) {
+		M -= 25000 * X;
+		S5 += X;
+		document.getElementById("money").innerHTML = M;
+		document.getElementById("store5").innerHTML = S5;
+	};
+};
+function SuperStore1() {
+	if (M >= 125000 * X) {
+		M -= 125000 * X;
+		S6 += X;
+		document.getElementById("money").innerHTML = M;
+		document.getElementById("store6").innerHTML = S6;
+	};
+};
+setInterval(function profit() {
+	if (S1 >= 1) {
+		M += S1 * 1;
+		document.getElementById("money").innerHTML = M;
+	};
+	if (S2 >=1) {
+		M += S2 * 12;
+		document.getElementById("money").innerHTML = M;
+	};
+	if (S3 >=1) {
+		M += S3 * 150;
+		document.getElementById("money").innerHTML = M;
+	};
+	if (S4 >=1) {
+		M += S4 * 720;
+		document.getElementById("money").innerHTML = M;
+	};
+	if (S5 >=1) {
+		M += S5 * 2000;
+		document.getElementById("money").innerHTML = M;
+	};
+	if (S6 >=1) {
+		M += S6 * 10500;
+		document.getElementById("money").innerHTML = M;
+	};
+}, 5000)
+setInterval(function() {
+	if (R >= 0) {
+		R1 = S1
+		R2 = S2 * 12
+		R3 = S3 * 150
+		R4 = S4 * 720
+		R5 = S5 * 2000
+		R6 = S6 * 10500
+		R = R1 + R2 + R3 +R4 + R5 + R6
+		document.getElementById("rate").innerHTML = R;
+	}}, 1000);
+setInterval(function() {
+	if (S1 >= 1000) {
+		document.getElementById("S1A").className = "Visible";
+	}
+	if (S1 >= 10000) {
+		document.getElementById("S1B").className = "Visible";
+	}
+	if (S1 >= 100000) {
+		document.getElementById("S1C").className = "Visible";
+	}
+	if (S2 >= 1000) {
+		document.getElementById("S2A").className = "Visible";
+	}
+	if (S2 >= 10000) {
+		document.getElementById("S2B").className = "Visible";
+	}
+	if (S2 >= 100000) {
+		document.getElementById("S2C").className = "Visible";
+	}
+	if (S3 >= 1000) {
+		document.getElementById("S3A").className = "Visible";
+	}
+	if (S3 >= 10000) {
+		document.getElementById("S3B").className = "Visible";
+	}
+	if (S3 >= 100000) {
+		document.getElementById("S3C").className = "Visible";
+	}
+	if (S4 >= 1000) {
+		document.getElementById("S4A").className = "Visible";
+	}
+	if (S4 >= 10000) {
+		document.getElementById("S4B").className = "Visible";
+	}
+	if (S4 >= 100000) {
+		document.getElementById("S4C").className = "Visible";
+	}
+	if (S5 >= 1000) {
+		document.getElementById("S5A").className = "Visible";
+	}
+	if (S5 >= 10000) {
+		document.getElementById("S5B").className = "Visible";
+	}
+	if (S5 >= 100000) {
+		document.getElementById("S5C").className = "Visible";
+	}
+	if (S6 >= 1000) {
+		document.getElementById("S6A").className = "Visible";
+	}
+	if (S6 >= 10000) {
+		document.getElementById("S6B").className = "Visible";
+	}
+	if (S6 >= 100000) {
+		document.getElementById("S6C").className = "Visible";
+	}
+	}, 1000)
+</script> 
+ <h1 align="center"><p>Open World</p></h1>
+<table width="100%" border="1">
+<tr>
+<td colspan="5" height="25">
+<div align="center">
+  <h4>Update V4 - New Acheivements and Buy 1000</h4></div>
+</td>
+</tr>
+  <tr>
+    <td width="33%" height="150" colspan="3"><a name="#Start" onClick="name1"><p onclick="name()" id="name">Name:</p></a><p>Clicks: <a id="clicks">0</a></p>
+</td>
+    <td width="33%" height="150"><div align="center"><button type="button" onClick="Click()"><h3>Click</h3></button></div></td>
+    <td width="33%" height="150"><div align="center"><p>Money:<a id="money">0</a></p></div><div align="center"><p>Rate:<a id="rate">0</a></p></div></td>
+  </tr>
+</table>
+<br />
+<table width="100%" border="1" height="35">
+<tr>
+    <td width="60%">Buy Quantity: <a id="X">1</a></td>
+    <td width="10%"><div align="center"><button type="button" onClick="X1()">1</button></div></td>
+    <td width="10%"><div align="center"><button type="button" onClick="X10()">10</button></div></td>
+    <td width="10%"><div align="center"><button type="button" onClick="X100()">100</button></div></td>
+    <td width="10%"><div align="center"><button type="button" onClick="X1000()">1000</button></div></td>
+  </tr>
+</table>
+<br/>
+<table width="100%" border="1" align="right" height="600">
+    <tr height="20">
+      <td width="130"><div align="center" id="S1A" class="hidden"><h3 class="Acheivement" id="1"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 1000 Stalls</span></div></h3></div></td>
+      <td width="130"><div align="center" id="S1B" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 10000 Stalls</span></div></h3></div></td>
+    <td width="130"><div align="center" id="S1C" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 100000 Stalls</span></div></h3></div></td>
+      <td width="30%"><h3 align="center"><div class="tooltip">Stall<span class="tooltiptext">Cost: 25<br/>Earn: 1</span></div></h3>
+      </td>
+      <td width="8%"><div align="center">
+        <button type="button" onClick="Stall1()">Buy</button>
+      </div></td>
+      <td width="20%" valign="middle"><p align="center">Owned:<a id="store1">0</a></p></td>
+    </tr>
+    <tr height="20">
+      <td width="130"><div align="center" id="S2A" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 1000 Carts</span></div></h3></div></td>
+      <td width="130"><div align="center" id="S2B" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 10000 Carts</span></div></h3></div></td>
+    <td width="130"><div align="center" id="S2C" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 100000 Carts</span></div></h3></div></td>
+      <td width="30%"><h3 align="center"><div class="tooltip">Cart<span class="tooltiptext">Cost: 250<br/>Earn: 12</span></div></h3></td>
+      <td width="8%"><div align="center"><button type="button" onClick="Cart1()">Buy</button></div></td>
+      <td width="20%" valign="middle"><p align="center">Owned:<a id="store2">0</a></p></td>
+    </tr>
+    <tr height="20">
+      <td width="130"><div align="center" id="S3A" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 1000 Small Stores</span></div></h3></div></td>
+      <td width="130"><div align="center" id="S3B" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 10000 Small Stores</span></div></h3></div></td>
+    <td width="130"><div align="center" id="S3C" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 100000 Small Stores</span></div></h3></div></td>
+      <td width="30%"><h3 align="center"><div class="tooltip">Small Store<span class="tooltiptext">Cost: 2500<br/>Earn: 150</span></div></h3></td>
+      <td width="8%"><div align="center">
+        <button type="button" onClick="Small1()">Buy</button>
+      </div></td>
+      <td width="20%" valign="middle"><p align="center">Owned:<a id="store3">0</a></p></td>
+    </tr>
+    <tr height="20">
+      <td width="130"><div align="center" id="S4A" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 1000 Marts</span></div></h3></div></td>
+      <td width="130"><div align="center" id="S4B" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 10000 Marts</span></div></h3></div></td>
+    <td width="130"><div align="center" id="S4C" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 100000 Marts</span></div></h3></div></td>
+      <td width="30%"><h3 align="center"><div class="tooltip">Mart<span class="tooltiptext">Cost: 10000<br/>
+      Earn: 720</span></div></h3></td>
+      <td width="8%"><div align="center">
+        <button type="button" onClick="Mart1()">Buy</button>
+      </div></td>
+      <td width="20%" valign="middle"><p align="center">Owned:<a id="store4">0</a></p></td>
+    </tr>
+    <tr height="20">
+      <td width="130"><div align="center" id="S5A" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 1000 Factories</span></div></h3></div></td>
+      <td width="130"><div align="center" id="S5B" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 10000 Factories</span></div></h3></div></td>
+    <td width="130"><div align="center" id="S5C" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 100000 Factories</span></div></h3></div></td>
+      <td width="30%">
+          <h3 align="center"><div class="tooltip">Factory<span class="tooltiptext">Cost: 25000<br/>
+      Earn: 2000</span></div></h3></td>
+      <td width="8%"><div align="center">
+        <button type="button" onClick="Factory1()">Buy</button>
+      </div></td>
+      <td width="20%" valign="middle"><p align="center">Owned:<a id="store5">0</a></p></td>
+    </tr>
+  <tr height="20">
+    <td width="130"><div align="center" id="S6A" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 1000 Super Stores</span></div></h3></div></td>
+    <td width="130"><div align="center" id="S6B" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 10000 Super Stores</span></div></h3></div></td>
+  <td width="130"><div align="center" id="S6C" class="hidden"><h3 class="Acheivement"><div class="tooltip">Acheivement<span class="tooltiptext">Buy 10000 Super Stores</span></div></h3></div></td>
+    <td width="30%">
+          <h3 align="center"><div class="tooltip">Super Store<span class="tooltiptext">Cost: 125000<br/>
+            Earn: 10500</span></div></h3>
+    	</td>
+   	<td width="8%"><div align="center">
+   	  <button type="button" onClick="SuperStore1()">Buy</button>
+ 	  </div>
+    	</td>
+   	<td width="20%" valign="middle"><p align="center">Owned:<a id="store6">0</a></p></td>
+    </tr>
+</table>
+<br />
+<br/>
+<br />
+</body>
+</html>

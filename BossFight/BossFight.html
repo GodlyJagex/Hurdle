@@ -1,0 +1,330 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Boss Fight</title>
+<style type="text/css">
+body {
+	background-color: #333;
+}
+body,td,th {
+	color: #999;
+}
+</style>
+</head>
+<script>
+//Variables
+//PlayerVariables
+var Health = 100;
+var Mana = 0;
+//PlayerVariablesEnd
+//BossVariables
+var EnemyHealth = 100;
+var EnemyMana = 0;
+//BossVariablesEnd
+var spam = 0;
+var x = 0;
+var y = 0;
+var Phase = 0;
+var Start = 0;
+//VariablesEnd
+//Player Combat
+function StartGame() {
+		Mana += 10;
+		Phase = 1;
+		document.getElementById("Description").innerHTML = "Pick An Action";
+		document.getElementById("PlayerMana").innerHTML = Mana;
+}
+
+function StartGameButton() {
+	if (Start <= 0) {
+		Mana += 10;
+		Phase = 1;
+		Start = 1;
+		document.getElementById("Description").innerHTML = "Pick An Action";
+		document.getElementById("PlayerMana").innerHTML = Mana;
+	} else {
+		Phase = 1;
+		document.getElementById("Description").innerHTML = "Pick An Action";
+		document.getElementById("PlayerMana").innerHTML = Mana;
+	}
+}
+
+function OptionAttack(){
+	if (Health >= 1) {
+		if (Phase >= 1){
+			Phase = 0;
+			PlayerAttack();
+		} else {
+			Spam();
+		}
+	} else {
+		document.getElementById("Description").innerHTML = "Sorry, You Are Dead!";
+	}
+}
+function OptionHeal() {
+	if (Health >= 1){
+		if (Phase >= 1) {
+			Phase = 0;
+			PlayerHeal();
+		} else {
+			Spam();
+		}
+	} else {
+		document.getElementById("Description").innerHTML = "Sorry, You Are Dead!";
+	}
+}
+function OptionFireBall(){
+	if (Health >= 1) {
+		if (Phase >=1) {
+			if (Mana >= 60) {
+				Phase = 0;
+				PlayerFireBall();
+			} else {
+				document.getElementById("Description").innerHTML = "Sorry, That Requires 60 Mana"
+			}
+		} else {
+			Spam();
+		}
+	} else {
+		document.getElementById("Description").innerHTML = "Sorry, You Are Dead!";
+	}
+}
+
+function OptionHealPlus() {
+	if (Health >= 1) {
+		if (Phase >=1) {
+			if (Mana >= 100) {
+				Phase = 0;
+				PlayerHealPlus();
+			} else {
+				document.getElementById("Description").innerHTML = "Sorry, That Requires 100 Mana"
+			}
+		} else {
+			Spam();
+		}
+	} else {
+		document.getElementById("Description").innerHTML = "Sorry, You Are Dead!";
+	}
+}
+//PlayerCombatEnd
+//EnemyCombat
+function EnemyCombat() {
+	EnemyMana += 10;
+	document.getElementById("EnemyMana").innerHTML = EnemyMana;
+	if (EnemyHealth >= 1) {
+		if (Health <= 30) {
+			if (EnemyMana >= 60) {
+				EnemyFireBall();
+			} else if (EnemyMana >= 20) {
+				EnemyHeal();
+			} else {
+				EnemyAttack();
+			}
+		} else {
+			if (EnemyHealth <= 30) {
+				if (EnemyMana >= 100) {
+					EnemyHealPlus();			
+				} else if (EnemyMana >= 20){
+					EnemyHeal();
+				} else {
+					EnemyAttack();
+				}
+			} else {
+				EnemyAttack();
+			}
+		}
+	} else {
+		document.getElementById("Description").innerHTML = "You Win, The Boss Has Died!!!";
+	}
+}
+//EnemyCombatEnd
+//FunctionDataBase
+function PlayerHeal() {
+	y = Math.floor((Math.random() * 100) + 1);
+	if (y >= 91) {
+		Health += 20;
+		document.getElementById("Description").innerHTML = "Super Heal, You Have Healed 20 Health";
+		document.getElementById("PlayerHealth").innerHTML = Health;
+		setTimeout(function PCH(){
+			EnemyCombat();
+		}, 2000);
+	} else {
+		Health += 10;
+		document.getElementById("Description").innerHTML = "You Have Healed 10 Health";
+		document.getElementById("PlayerHealth").innerHTML = Health;
+		setTimeout(function PH(){
+			EnemyCombat();
+		}, 2000);
+	}
+}
+function PlayerAttack() {
+	x = Math.floor((Math.random() * 20) + 1);
+	y = Math.floor((Math.random() * 100) + 1);
+	if (y >= 91 ) {
+		z = x*2;
+		EnemyHealth -= z;
+		document.getElementById("Description").innerHTML = "You Have Dealt " + z + " Damage";
+		document.getElementById("EnemyHealth").innerHTML = EnemyHealth;
+		setTimeout(function PCA(){
+			EnemyCombat();
+		}, 2000);
+	} else {
+		EnemyHealth -= x;
+		document.getElementById("Description").innerHTML = "You Have Dealt " + x + " Damage";
+		document.getElementById("EnemyHealth").innerHTML = EnemyHealth;
+		setTimeout(function PA(){
+			EnemyCombat();
+		}, 2000);
+	}
+}
+function Spam() {
+	spam += 1;
+	if (spam <= 25) {
+		document.getElementById("Description").innerHTML = "I'm sorry, you can not do that right now.";
+	} else {
+		document.getElementById("Description").innerHTML = "Due to excessive uneeded button pressing you have lost health";
+		Health -= 10;
+		document.getElementById("PlayerHealth").innerHTML = Health;
+	}
+}
+
+function EnemyAttack() {
+	x = Math.floor((Math.random() * 20) + 1);
+	y = Math.floor((Math.random() * 100) + 1);
+	if (y >= 86) {
+		z = x*2;
+		document.getElementById("Description").innerHTML = "The Boss Has Dealt " + z + " Damage";
+		document.getElementById("PlayerHealth").innerHTML = Health;
+		setTimeout(function ECA(){
+			StartGame();
+		}, 2000);
+	} else {
+		Health -= x;
+		document.getElementById("Description").innerHTML = "The Boss Has Dealt " + x + " Damage";
+		document.getElementById("PlayerHealth").innerHTML = Health;
+		setTimeout(function ECA(){
+			StartGame();
+		}, 2000);	
+	}
+}
+function EnemyHeal() {
+	y = Math.floor((Math.random() * 100) + 1);
+	if (y >= 86) {
+		EnemyHealth += 20;
+		document.getElementById("Description").innerHTML = "Super Heal, The Boss Has Healed 20 Health";
+		document.getElementById("EnemyHealth").innerHTML = EnemyHealth;
+		setTimeout(function ECH(){
+			StartGame();
+		}, 2000);
+	} else {
+		EnemyHealth += 10;
+		document.getElementById("Description").innerHTML = "The Boss Has Healed 10 Health";
+		document.getElementById("EnemyHealth").innerHTML = EnemyHealth;
+		setTimeout(function EH(){
+			StartGame();
+		}, 2000);
+	}
+}
+function PlayerFireBall(){
+	Mana -= 60;
+	EnemyHealth -= 30;
+	document.getElementById("Description").innerHTML = "Fireball Spell, You Have Dealt 30 Damage";
+	document.getElementById("PlayerMana").innerHTML = Mana;
+	document.getElementById("EnemyHealth").innerHTML = EnemyHealth;
+	setTimeout(function PFB(){
+		EnemyCombat();
+	}, 2000);
+}
+
+function EnemyFireBall(){
+	EnemyMana -= 60;
+	Health -= 30;
+	document.getElementById("Description").innerHTML = "Fireball Spell, The Boss Has Dealt 30 Damage";
+	document.getElementById("PlayerHealth").innerHTML = Health;
+	document.getElementById("EnemyMana").innerHTML = EnemyMana;
+	setTimeout(function EFB(){
+		StartGame();
+	}, 2000);
+}
+
+function PlayerHealPlus() {
+		Mana -= 100;
+		Health += 50;
+		document.getElementById("Description").innerHTML = "Heal+ Spell, Healed 50";
+		document.getElementById("PlayerHealth").innerHTML = Health;
+		document.getElementById("PlayerMana").innerHTML = Mana;
+		setTimeout(function PS(){
+			EnemyCombat();
+		}, 2000);
+}
+function EnemyHealPlus() {
+	EnemyMana -= 100;
+	EnemyHealth += 50;
+	document.getElementById("Description").innerHTML = "Heal+ Spell, Boss Healed 50";
+	document.getElementById("EnemyMana").innerHTML = EnemyMana;
+	document.getElementById("EnemyHealth").innerHTML = EnemyHealth;
+	setTimeout(function ES(){
+		StartGame();
+	}, 2000);
+}
+//FunctionDataBaseEnd
+//Reference
+function Texts() {
+	document.getElementById("Description").innerHTML = "Action";
+	document.getElementById("PlayerHealth").innerHTML = Health;
+	document.getElementById("EnemyHealth").innerHTML = EnemyHealth;
+	var x = Math.floor((Math.random() * 100) + 1);
+}
+//ReferenceEnd
+</script>
+<body>
+<div align="center"><br/>
+  <table width="225" height="100" border="2">
+    <tr>
+      <td align="center" valign="middle"><h1>Boss Fight</h1></td>
+    </tr>
+  </table>
+  <br/>
+ <table width="175"  height="50" border="2">
+  <tr>
+    <td align="center" valign="middle"><button type="button" onclick="StartGameButton()">Start</button></td>
+  </tr>
+</table>
+</div>
+<br/>
+<table width="100%" border="2">
+  <tr>
+    <td colspan="2" align="center" width="50%"><h2>Player</h2></td>
+    <td colspan="2" align="center" width="50%"><h2>Boss</h2></td>
+  </tr>
+    <tr>
+    <td align="center" width="25%">Health: <a id="PlayerHealth">100 (0)</a></td>
+    <td align="center" width="25%">Mana: <a id="PlayerMana">0</a></td>
+    <td align="center" width="25%">Health: <a id="EnemyHealth">100 (0)</a></td>
+    <td align="center" width="25%">Mana: <a id="EnemyMana">0</a></td>
+  </tr>
+</table>
+<br/>
+<table width="50%" border="2" align="right">
+  <tr>
+    <td><div align="center" id="Description">Description</div></td>
+  </tr>
+</table>
+<table width="200" height="200"border="2">
+	<tr>
+    	<td align="center" valign="middle"><button type="button" onclick="OptionAttack()">Attack</button></td>
+	</tr>
+    <tr>
+    	<td align="center" valign="middle"><button type="button" onclick="OptionHeal()">Heal</button></td>
+	</tr>
+    <tr>
+    	<td align="center" valign="middle"><button type="button" onclick="OptionFireBall()">FireBall</button></td>
+	</tr>
+	<tr>
+  		<td align="center" valign="middle"><button type="button" onclick="OptionHealPlus()">Heal +</button></td>
+	</tr>
+</table>
+<br/>
+</body>
+</html>

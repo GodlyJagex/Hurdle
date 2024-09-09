@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+</head>
+<script>
+var C = 0;
+var B = 3;
+var A = 0;
+var Coin = 0;
+var Health = 100;
+var x = 0;
+var Score = 0;
+function Draw() {
+	if (A < 1) {
+		A = B;
+		var x = Math.floor((Math.random() * 100) + 1);
+		document.getElementById("Time").innerHTML = A;
+			if (x >= 31) {
+				 if (x <= 100) {
+					 if (Health < 10) {
+						 
+					 } else if (Health > 0) {
+						Coin += 100; 
+						Score += 50;
+						document.getElementById("Score").innerHTML = Score;
+				 		document.getElementById("Coins").innerHTML = Coin;
+				 		document.getElementById("Msg").innerHTML = "You have received Coins.";
+					 }
+				 }
+			 }
+			 if (x >= 1) {
+				 if (x <= 30) {
+					 	Health -= 10;
+						Score -= 10;
+						document.getElementById("Score").innerHTML = Score;
+				 		document.getElementById("Health").innerHTML = Health;
+						document.getElementById("Msg").innerHTML = "You have taken 10 damage.";
+					  if (Health < 10) {
+						B = "Dead";
+						document.getElementById("Time").innerHTML = A;
+						document.getElementById("Score").innerHTML = Score;
+				 		document.getElementById("Health").innerHTML = Health;
+						document.getElementById("Msg").innerHTML = "You have DIED.";
+					} 
+			}
+		}
+	}
+}
+setInterval (function(){
+	if (A > 0) {
+		A-= 1;
+		document.getElementById("Time").innerHTML = A;
+	}
+}, 1000)
+function pack() {
+	if (Coin >= 1000) {
+		Coin -= 1000;
+		Health += 50;
+		document.getElementById("Coins").innerHTML = Coin;
+		document.getElementById("Health").innerHTML = Health;
+	}
+}
+function Up1() {
+	if (C=0) {
+		if (Coin >= 1500) {
+			Coin -= 1500;
+			B = B -1;
+			C = 1;
+			document.getElementById("Coins").innerHTML = Coin;
+		}
+	}
+}
+function Up2() {
+	if (C= 1) {
+		if (Coin >= 3500) {
+			Coin -= 3500;
+			B = B -1;
+			C = 2;
+			document.getElementById("Coins").innerHTML = Coin;
+		}
+	}
+}
+</script>
+<body>
+<table width="100%" border="0" height="50">
+  <tr>
+    <td><h1 align="center">The Horribly Shitty Game</h1></td>
+  </tr>
+</table>
+<table width="100%" border="0" height="35">
+  <tr>
+    <td width="33%"><table width="100%" border="0">
+      <tr>
+        <td width="33%">
+        	<div align="center">
+       		  <button type="button" onClick="Draw()"><p align="center">Draw</p></button>
+            </div>
+        </td>
+        <td width="33%">
+        <table width="100%" border="2" height="100%">
+          <tr height="50%">
+            <td><div align="center"><h3><a id="Time">0</a></h3></div></td>
+          </tr>
+        </table>
+        </td>
+      </tr>
+    </table></td>
+    <td width="33%"><h2 align="center"><a id="Msg">This is text.</a></h2></td>
+    <td width="33%">
+    	<table width="100%" border="0">
+    		<tr>
+        		<td width="33%">
+        			<table width="100%" border="2">
+          				<tr>
+      						<td width="33%"><div align="center"><h3>Health: <a id="Health">100</a></h3></div></td>
+          				</tr>
+        			</table>
+				</td>
+        		<td width="33%">
+                	<table width="100%" border="2">
+        		  		<tr>
+        		    		<td width="33%"><div align="center"><h3>Coins: <a id="Coins">0</a></h3></div></td>
+      		    		</tr>
+      		  		</table>
+              	</td>
+                <td width="33%">
+                	<table width="100%" border="2">
+        		  		<tr>
+        		    		<td width="33%"><div align="center"><h3>Score: <a id="Score">0</a></h3></div></td>
+      		    		</tr>
+      		  		</table>
+              	</td>
+      		</tr>
+   	  </table>
+    </td>
+  </tr>
+</table>
+<br/>
+<table width="100%" border="2" height="250">
+  <tr>
+    <td width="33%"><table width="200" border="2" align="center">
+  <tr>
+    <td height="150"><div align="center">
+      <h3>Health Pack</h3>
+    </div>
+    <p align="center">Heals 50 Health</p>
+    <p align="center">Cost: 1000</p></td>
+  </tr>
+  <tr>
+    <td height="50"><div align="center"><button type="button" onclick="pack()">Buy</button></div></td>
+  </tr>
+</table></td>
+    <td width="33%"><table width="200" border="2" align="center">
+  <tr>
+    <td height="150"><div align="center">
+      <h3>Speed Upgrade 1</h3>
+    </div>
+    <p align="center">Reduces draw cooldown by 1 second</p>
+    <p align="center">Cost: 1500</p></td>
+  </tr>
+  <tr>
+    <td height="50"><div align="center"><button type="button" onclick="Up1()">Buy</button></div></td>
+  </tr>
+</table></td>
+    <td width="33%"><table width="200" border="2" align="center">
+  <tr>
+    <td height="150"><div align="center">
+      <h3>Speed Upgrade 2</h3>
+    </div>
+    <p align="center">Reduces draw cooldown by 1 second</p>
+    <p align="center">Cost: 3500</p></td>
+  </tr>
+  <tr>
+    <td height="50"><div align="center"><button type="button" onclick="Up2()">Buy</button></div></td>
+  </tr>
+</table></td>
+  </tr>
+</table>
+
+</body>
+</html>
