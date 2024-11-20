@@ -1,32 +1,29 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-    <link href="css.css" rel="stylesheet" type="text/css">
-  </head>
-
-  <script src="js.js"></script>
-
-  <body>
-    <table id="Header">
-      <tr>
-        <td id="HeaderRow">Row: 3</td>
-        <td><button onclick="increaseRows()">+</button> <button onclick="decreaseRows()">-</button></td>
-        <td></td>
-        <td><button onclick="createTable()">Refresh Table</button></td>
-      </tr>
-      <tr>
-        <td id="HeaderColumn">Column: 3</td>
-        <td><button onclick="increaseColumns()">+</button> <button onclick="decreaseColumns()">-</button></td>
-        <td></td>
-        <td><button onclick="deleteTable()">Delete Table</button></td>
-      </tr>
-    </table>
-    <br>
-      <br>
-        <br>
-    <table id="table">
-    </table>
-  </body>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link href="css.css" rel="stylesheet" type="text/css">
+	</head>
+	<body>
+		<table>
+			<div id="Main">
+				<H1 id="Gold">Gold: 0</H1>
+				<button onclick="toggleLayer()">Toggle Layers</button>
+			</div>
+		</table>
+		<!--Grid Layer-->
+		<div id="layer1" class="layer active">
+			<div class="TableDiv">
+				<table id="table">
+				</table>
+			</div>
+		</div>
+		<!--Grid Layer End-->
+		<!--Shop Layer-->
+		<div id="layer2" class="layer">
+		</div>
+		<!--Shop Layer End-->
+		<script src="js.js"></script>
+	</body>
 </html>
