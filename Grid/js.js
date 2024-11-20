@@ -4,45 +4,48 @@ var tableHeight = 3;
 var currenttableHeight = 3;
 var currenttableWidth = 3;
 
+var minesTotal = 0;
+var hiddenCells = 0;
+var goldTotal = 0;
+var ClickingVar  = false;
+const table = document.getElementById("table");
+
 function createTable(){
-    var table = document.getElementById("table");
-    for (let index = 0; index < tableHeight; index++) {
-        var row = table.insertRow(index);
-        var rowNumber = index+1
-        row.id = ("row"+rowNumber);
-        for (let index2 = 0; index2 < tableWidth; index2++){
-            var row = table.rows[index];
+    document.getElementById('Gold').innerHTML = 'Gold: ' + goldTotal;
+    hiddenCells = 0;
+    table.innerHTML="";
+    for (var i = 0; i < tableHeight; i++) {
+        var row = table.insertRow();
+        for (var j = 0; j < tableWidth; j++) {
             var cell = row.insertCell();
-            var cellNumber = index2+1;
-            cell.id = ("Cell"+cellNumber);
-            cell.setAttribute("onclick","deleteCell(this)");
         }
     }
+    const cells = document.querySelectorAll('#table td');
+    cells.forEach(cell => {
+        cell.setAttribute('onclick', 'makeInvisible(this)');
+    });
+
     currenttableHeight = tableHeight;
     currenttableWidth = tableWidth;
 }
 
-function deleteTable(){
-    var table = document.getElementById("table");
-    table.innerHTML = "";
+function additionalBoard() {
+    var interactionTotal = (hiddenCells + minesTotal);
+    var boardSize = (currenttableHeight * currenttableWidth);
+    var userDifference = (boardSize - interactionTotal);
+    if (interactionTotal == boardSize) {
+        setTimeout( function() { createTable(); }, 500);
+    }
 }
 
-function refreshTable(){
-    deleteTable();
-    createTable();
-    document.getElementById("HeaderRow").innerHTML= "Rows: "+tableHeight;
-    document.getElementById("HeaderColumn").innerHTML= "Columns: "+TableWidth;
-}
-
-function deleteCell(CellData){
-    var table = document.getElementById("table");
-    for (let index = 0; index < currenttableHeight; index++) {
-        for (let index2 = 0; index2 < currenttableWidth; index2++){
-            var row = table.rows[index];
-            if (row.children[index2]=CellData) {
-               CellData.setAttribute("style","visibility: hidden;");
-            }
-        }
+function makeInvisible(cell) {
+    cell.removeAttribute("onclick");
+    cell.setAttribute("style","visibility: hidden;");
+    hiddenCells +=1;
+    goldTotal +=1;
+    document.getElementById('Gold').innerHTML = 'Gold: ' + goldTotal;
+    if (hiddenCells >= currenttableHeight+currenttableWidth){
+        additionalBoard();
     }
 }
 
@@ -62,3 +65,10 @@ function decreaseColumns(){
     tableWidth -=1;
     document.getElementById("HeaderColumn").innerHTML= "Columns: "+tableWidth;
 }
+  
+  function toggleLayer() {
+    document.getElementById('layer1').classList.toggle('active');
+    document.getElementById('layer2').classList.toggle('active');
+}
+
+createTable();
