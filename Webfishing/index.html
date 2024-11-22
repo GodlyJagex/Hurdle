@@ -10,24 +10,21 @@
     <h3>Used to calculate what your rank would be past 50 by using your excess experience</h3>
     <input type="number" id="userInput" placeholder="Enter Your Experience">
     <button onclick="storeNumber()">Submit</button>
-    <h1 id="outputtest"></h1>
+    <h1 id="outputtest">Rank:50 0/30700</h1>
 
     <script>
-        var TotalExperience = 0;
-        var TotalRequirements = 100;
-        var ExperienceRequirement = 30700;
-        let storedNumber;
-        let index1 = 50;
-        let test = 0;
         function storeNumber() {
-            TotalRequirements = 100;
-            ExperienceRequirement = 30700;
+            var TotalExperience = 0;
             TotalExperience = document.getElementById('userInput').value;
-            for (let index = 50; TotalExperience > ExperienceRequirement ; index++) {
+            let TotalRequirements = 100;
+            let ExperienceRequirement = 30700;
+            let index1 = 50;
+            let test = 0;
+            while (TotalExperience >= ExperienceRequirement){
                 TotalExperience -= ExperienceRequirement;
-                Test = Math.round( (((index * index) * 0.15) * 75)/50)*50
-                ExperienceRequirement = (100 + ((index - 1)*50)) + Test;
-                index1 = index;
+                index1 +=1;
+                Test = Math.round( (((index1 * index1) * 0.15) * 75)/50)*50
+                ExperienceRequirement = (100 + ((index1 - 1)*50)) + Test;
             }
             document.getElementById('outputtest').innerHTML = 'Rank:'+ index1 + ' ' + TotalExperience + '/' + ExperienceRequirement;
         }
