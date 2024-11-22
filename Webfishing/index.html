@@ -1,1 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Fishing</title>
+</head>
+<body>
+    <h1>Enter Experience</h1>
+    <input type="number" id="userInput" placeholder="Enter a number">
+    <button onclick="storeNumber()">Submit</button>
+    <h1 id="outputtest"></h1>
 
+    <script>
+        var TotalExperience = 0;
+        var TotalRequirements = 100;
+        var ExperienceRequirement = 0;
+        let storedNumber;
+        let index1 = 50;
+        let test = 0;
+        function storeNumber() {
+            TotalExperience = document.getElementById('userInput').value;
+            for (let index = 50; TotalExperience > ExperienceRequirement ; index++) {
+                TotalExperience -= ExperienceRequirement;
+                Test = Math.round( (((index * index) * 0.15) * 75)/50)*50
+                ExperienceRequirement = (100 + ((index - 1)*50)) + Test;
+                index1 = index;
+            }
+            document.getElementById('outputtest').innerHTML = 'Rank:'+ index1 + ' ' + TotalExperience + '/' + ExperienceRequirement;
+        }
+    </script>
+
+</body>
+</html>
