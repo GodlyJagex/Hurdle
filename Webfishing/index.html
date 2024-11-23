@@ -24,15 +24,14 @@
             TotalExperience = document.getElementById('userInput').value;
             let TotalRequirements = 100;
             let ExperienceRequirement = 30700;
-            let index1 = 50;
-            let test = 0;
+            let Level = 50;
             while (TotalExperience >= ExperienceRequirement){
                 TotalExperience -= ExperienceRequirement;
-                index1 +=1;
-                Test = Math.round( (((index1 * index1) * 0.15) * 75)/50)*50
-                ExperienceRequirement = (100 + ((index1 - 1)*50)) + Test;
+                Level +=1;
+                let Test = Math.round( (((Level * Level) * 0.15) * 75)/50)*50
+                ExperienceRequirement = (100 + ((Level - 1)*50)) + Test;
             }
-            document.getElementById('outputtest').innerHTML = 'Rank:'+ index1 + ' ' + TotalExperience + '/' + ExperienceRequirement;
+            document.getElementById('outputtest').innerHTML = 'Rank:'+ Level + ' ' + TotalExperience + '/' + ExperienceRequirement;
         }
     </script>
 
