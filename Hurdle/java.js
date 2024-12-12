@@ -57,22 +57,29 @@ document.addEventListener(
 );
 
 function compare() {
-	const AnswerArr = Array.from(Answer);
-    const InputArr = Array.from(Input);
+	Checked = [0, 0, 0, 0, 0];
+	Spotted = [0, 0, 0, 0, 0];
 
-    InputArr.forEach((letter, index) => {
-        if (letter === AnswerArr[index]) {
-            Correct++;
-            AnswerArr[index] = null; // Mark as checked
-        }
-    });
-
-    InputArr.forEach((letter) => {
-        if (AnswerArr.includes(letter)) {
-            Incorrect++;
-            AnswerArr[AnswerArr.indexOf(letter)] = null; // Mark as checked
-        }
-    });
+ 
+	for (let i = 0; i < 5; i++) {
+		if (Answer[i] == Input[i] && Spotted[i] !== 1 && Checked[i] !== 1) {
+			Correct += 1;
+			Spotted[i] = 1;
+			Checked[i] = 1;
+		}
+	}
+ 
+	for (let j = 0; j < 5; j++) {
+		if (Spotted[j] !== 1) {
+			for (let k = 0; k < 5; k++) {
+				if (Answer[j] == Input[k] && Checked[k] !== 1) {
+					Incorrect += 1;
+					Spotted[j] = 1;
+					Checked[k] = 1;
+				}
+			}
+		}
+	}
 
 	editRow();
 	Init();
