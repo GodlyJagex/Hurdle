@@ -21,9 +21,9 @@ function Init() {
  
 	var row = document.createElement("tr");
 	row.id = "row" + rownumber;
- 
+
 	var cells = [];
-	for (let i = 0; i < 7; i++) {
+	for (let i = 0; i < Answer.length+2; i++) {
 		cells[i] = document.createElement("td");
 	}
  
@@ -50,37 +50,30 @@ document.addEventListener(
 	}
 	if (/^[a-z]$/i.test(event.key) & Input.length < 5) {
 			Input += keyName;
-			editRow();
+			updatePreview();
 	}
 	},
 	false,
 );
 
 function compare() {
-	Checked = [0, 0, 0, 0, 0];
-	Spotted = [0, 0, 0, 0, 0];
+	const AnswerArr = Array.from(Answer);
+    const InputArr = Array.from(Input);
 
- 
-	for (let i = 0; i < 5; i++) {
-		if (Answer[i] == Input[i] && Spotted[i] !== 1 && Checked[i] !== 1) {
-			Correct += 1;
-			Spotted[i] = 1;
-			Checked[i] = 1;
-		}
-	}
- 
-	for (let j = 0; j < 5; j++) {
-		if (Spotted[j] !== 1) {
-			for (let k = 0; k < 5; k++) {
-				if (Answer[j] == Input[k] && Checked[k] !== 1) {
-					Incorrect += 1;
-					Spotted[j] = 1;
-					Checked[k] = 1;
-				}
-			}
-		}
-	}
- 
+    InputArr.forEach((letter, index) => {
+        if (letter === AnswerArr[index]) {
+            Correct++;
+            AnswerArr[index] = null; // Mark as checked
+        }
+    });
+
+    InputArr.forEach((letter) => {
+        if (AnswerArr.includes(letter)) {
+            Incorrect++;
+            AnswerArr[AnswerArr.indexOf(letter)] = null; // Mark as checked
+        }
+    });
+
 	editRow();
 	Init();
 }
@@ -95,7 +88,12 @@ function Cheat() {
 };
 function trim() {
 	Input = Input.replace(/.$/, "");
-	editRow();
+	updatePreview();
+}
+function updatePreview(){
+	var rowclass = "row" + rownumber;
+	var table = document.getElementById("table");
+	document.getElementById(rowclass).innerHTML = "<td>"+Input.charAt(0)+"</td><td>"+Input.charAt(1)+"</td><td>"+Input.charAt(2)+"</td><td>"+Input.charAt(3)+"</td><td>"+Input.charAt(4)+"</td><td class=Green>"+'-'+"</td><td class=Yellow>"+'-'+"</td>";
 }
 
 function editRow()
@@ -106,6 +104,6 @@ function editRow()
 		document.getElementById(rowclass).innerHTML = "<td>"+Input.charAt(0)+"</td><td>"+Input.charAt(1)+"</td><td>"+Input.charAt(2)+"</td><td>"+Input.charAt(3)+"</td><td>"+Input.charAt(4)+"</td><td class=Green>"+Correct+"</td><td class=Yellow>"+Incorrect+"</td>";
 	}else{
 		document.getElementById(rowclass).innerHTML = "<td class=Green>"+Input.charAt(0)+"</td><td class=Green>"+Input.charAt(1)+"</td><td class=Green>"+Input.charAt(2)+"</td><td class=Green>"+Input.charAt(3)+"</td><td class=Green>"+Input.charAt(4)+"</td><td class=Green>"+Correct+"</td><td class=Yellow>"+Incorrect+"</td>";
-		Break;
+		throw new Error("Fake Error To Hault Code");
 	} return;
 }
