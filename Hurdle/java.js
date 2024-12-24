@@ -57,30 +57,28 @@ document.addEventListener(
 );
 
 function compare() {
-	Checked = [0, 0, 0, 0, 0];
-	Spotted = [0, 0, 0, 0, 0];
-	Correct = 0;
-	Incorrect = 0;
- 
-	for (let i = 0; i < 5; i++) {
-		if (Answer[i] == Input[i] && Spotted[i] !== 1 && Checked[i] !== 1) {
-			Correct += 1;
-			Spotted[i] = 1;
-			Checked[i] = 1;
-		}
-	}
- 
-	for (let j = 0; j < 5; j++) {
-		if (Spotted[j] !== 1) {
-			for (let k = 0; k < 5; k++) {
-				if (Answer[j] == Input[k] && Checked[k] !== 1) {
-					Incorrect += 1;
-					Spotted[j] = 1;
-					Checked[k] = 1;
-				}
-			}
-		}
-	}
+    let Used = new Array(Answer.length).fill(false);
+    let InputUsed = new Array(Input.length).fill(false);
+
+    for (let i = 0; i < Answer.length; i++) {
+        if (Answer[i] === Input[i]) {
+            Correct++;
+            Used[i] = true;
+            InputUsed[i] = true;
+        }
+    }
+
+    for (let i = 0; i < Answer.length; i++) {
+        if (!Used[i]) {
+            for (let j = 0; j < Input.length; j++) {
+                if (!InputUsed[j] && Answer[i] === Input[j]) {
+                    Incorrect++;
+                    InputUsed[j] = true;
+                    break;
+                }
+            }
+        }
+    }
 
 	editRow();
 	Init();
