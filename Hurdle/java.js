@@ -59,7 +59,8 @@ document.addEventListener(
 function compare() {
 	Checked = [0, 0, 0, 0, 0];
 	Spotted = [0, 0, 0, 0, 0];
-
+	Correct = 0;
+	Incorrect = 0;
  
 	for (let i = 0; i < 5; i++) {
 		if (Answer[i] == Input[i] && Spotted[i] !== 1 && Checked[i] !== 1) {
