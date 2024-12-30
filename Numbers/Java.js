@@ -8,31 +8,31 @@ var Combinations = [];
 
 //Function To JumpStart The Process
 function StartProcess() {
+	UserInput = "[" + document.getElementById('UserSelectedVariables').value + "]";
+	TargetValue = document.getElementById('TargetValue').value;
 	document.getElementById('Output').innerHTML = [];
-	Combinations = generateCombinations(UserInput, CombinationLength);
+	Combinations = generateCombinations(UserInput);
 }
 
-function generateCombinations(input, length) {
+function generateCombinations(array) {
     let result = [];
 
-    function combine(current, start) {
-        if (current.length === length) {
-            result.push(current.slice());
-            return;
+    const combine = (start, current) => {
+		console.log(current);
+		 result.push(current);
+        for (let i = start; i < array.length; i++) {
+			if (AllowReusingNumbers === 'NO' && current.includes(UserInput[i])) {
+				continue;
+			}
+            combine(i + 1, current.concat(array[i]));
         }
-        for (let i = start; i < input.length; i++) {
-        		if (AllowReusingNumbers === 'NO' && current.includes(UserInput[i])) {
-							continue;
-						}
-            current.push(input[i]);
-            combine(current, i); // allow duplicates by passing i
-            current.pop();
-        }
-    }
+    };
 
-    combine([], 0);
-    return DoMathType(result);
+    combine(0, []);
+    result = result.filter(item => item.length === CombinationLength);
+	DoMathType(result);
 }
+
 function DoMathType(results) {
 	if (MathType === 'ADDITION') {
 		results = results.filter(array => {
@@ -47,7 +47,6 @@ function DoMathType(results) {
 	for (let i = 0; i < results.length; i++) {
 		document.getElementById('Output').innerHTML += '<tr><td>' + results[i] + '</td></tr>';
 	}
-	return results
 }
 
 //UserInput To Variable
@@ -79,9 +78,9 @@ function SubLength() {
 
 
 function SetUserInput() {
-	UserInput = document.getElementById('UserSelectedVariables').value;
+	UserInput = "[" + document.getElementById('UserSelectedVariables').value + "]";
 	TargetValue = document.getElementById('TargetValue').value;
+	console.log(TargetValue);
 	console.log(UserInput);
-	return
 }
 
