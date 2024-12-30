@@ -41,7 +41,7 @@ function DoMathType(results) {
 	} else if (MathType === 'MULTIPLICATION') {
 		results = results.filter(TempVar1 => {
 			const TempVar2 = TempVar1.reduce((acc, val) => acc * val, 1);
-			return TempVar2 === TargetValue;
+			return TempVar2 == TargetValue;
 		});
 	}
 	for (let i = 0; i < results.length; i++) {
