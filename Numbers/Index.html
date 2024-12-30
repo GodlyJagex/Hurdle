@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <title>Numbers</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale = 1.0">
+    <link href="CSS.css" rel="stylesheet" type="text/css">
+    <script src="Java.js"></script>
+  </head>
+
+  <style>
+    .nobr {display:inline;}
+    body{
+      background-color: rgb(46, 46, 46);
+      color: rgb(43, 122, 192);
+    }
+    .table {
+      width: 100%;
+    }
+    td {
+	    font-size: 15px;
+	    font-weight: bold;
+	    text-align:center;
+    	vertical-align:middle;
+	    text-align:center;
+    }
+    .CustomTable {
+      width: 20%;
+      margin-left: auto;
+      margin-right: auto;
+	    text-align:center;
+    	vertical-align:middle;
+	    text-align:center;
+    }
+    </style>
+
+  <body>
+    <table class="table">
+      <tr>
+        <td>Number Pool</td>
+        <td>Combination Length</td>
+        <td>Target Value</td>
+        <td>Allow Duplicates</td>
+        <td>🗹 Addition or Multiplication ☐</td>
+      </tr>
+      <tr>
+        <td>
+          <input type="text" id="UserSelectedVariables" value="[1,2,3,4,5,6,7,8,9,10]">
+          <button type="button" onclick="SetUserInput()">Apply</button>
+        </td>
+        <td>
+          <p class="nobr" id="LengthText">3</p>
+          <button name="LengthTag" type="button" onclick="AddLength()">+</button>
+          <button name="LengthTag" type="button" onclick="SubLength()">-</button>
+        </td>
+        <td>
+          <input type="text" id="TargetValue" value=""/>
+        </td>
+        <td>
+          <input type="checkbox" id="DuplicateLockedCheckBox" name="DuplicateLockedCheckBox" onclick="SetDuplicateLocked();" checked/>
+        </td>
+        <td>
+          <select id="ADDMUL" onchange="SetMathType(this)"> 
+            <option>Addition</option>
+            <option>Multiplication</option>
+          </select>
+        </td>
+      </tr>
+    </table>
+
+      <button type="button" onclick="StartProcess()">Start</button>
+
+    <table id="Output" class="CustomTable">
+
+    </table>
+  </body>
+</html>
