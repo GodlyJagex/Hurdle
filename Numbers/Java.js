@@ -1,86 +1,78 @@
-// All Variables Are User Defined In The Web Interface
-var UserInput = [1,2,3,4,5,6,7,8,9,10]; // Pool of Numbers Allowed In Calculations
-var CombinationLength = 3; // Set your desired combination length
-var AllowReusingNumbers = 'YES'; // Set to 'YES' to Allow duplicates
-var MathType = 'ADDITION'; // Sets Math Type
-var TargetValue = 10; // Target Outcome for sum or product of array
-var Combinations = [];
+let UserInput = [1, 2, 3, 4, 5, 6]; // Pool of Numbers Allowed in Calculations
+let CombinationLength = 3; // Desired combination length
+let AllowReusingNumbers = false; // If 'true', allows duplicates
+let MathType = 'MULTIPLICATION'; // Math operation: 'ADDITION' or 'MULTIPLICATION'
+let TargetValue = 30; // Target outcome for sum or product of array
 
-//Function To JumpStart The Process
-function StartProcess() {
-	UserInput = "[" + document.getElementById('UserSelectedVariables').value + "]";
-	TargetValue = document.getElementById('TargetValue').value;
-	document.getElementById('Output').innerHTML = [];
-	Combinations = generateCombinations(UserInput);
+// Function to jumpstart the process
+function startProcess() {
+    const userInputValue = document.getElementById('UserSelectedVariables').value;
+    const targetValue = parseInt(document.getElementById('TargetValue').value);
+    const outputElement = document.getElementById('Output');
+    
+    // Parse UserInput
+    UserInput = userInputValue.split(',').map(Number);
+
+    // Update TargetValue
+    TargetValue = targetValue;
+
+    // Clear previous output
+    outputElement.innerHTML = '';
+
+    // Generate combinations and display results
+    const result = generateCombinations(UserInput, CombinationLength, AllowReusingNumbers, MathType, TargetValue);
+    result.forEach(combination => {
+        outputElement.innerHTML += `<tr><td>${combination}</td></tr>`;
+    });
 }
 
-function generateCombinations(array) {
-    let result = [];
+// Function to generate combinations
+function generateCombinations(userInput, combinationLength, allowReusingNumbers, mathType, targetValue) {
+    const combinations = []; // Store valid combinations
 
-    const combine = (start, current) => {
-		console.log(current);
-		 result.push(current);
-        for (let i = start; i < array.length; i++) {
-			if (AllowReusingNumbers === 'NO' && current.includes(UserInput[i])) {
-				continue;
-			}
-            combine(i + 1, current.concat(array[i]));
+    // Helper function for generating combinations recursively
+    function generate(currentCombination, startIndex) {
+        // If current combination has the desired length
+        if (currentCombination.length === combinationLength) {
+            let result = mathType === "ADDITION"
+                ? currentCombination.reduce((sum, num) => sum + num, 0)
+                : currentCombination.reduce((product, num) => product * num, 1);
+
+            // Check if result matches the target value
+            if (result === targetValue) {
+                combinations.push([...currentCombination]);
+            }
+            return;
         }
-    };
 
-    combine(0, []);
-    result = result.filter(item => item.length === CombinationLength);
-	DoMathType(result);
+        // Generate combinations recursively
+        for (let i = startIndex; i < userInput.length; i++) {
+            currentCombination.push(userInput[i]);
+
+            // Reuse numbers if allowed, otherwise move to the next index
+            generate(currentCombination, allowReusingNumbers ? i : i + 1);
+            currentCombination.pop(); // Backtrack
+        }
+    }
+
+    // Start generating combinations
+    generate([], 0);
+
+    return combinations;
 }
 
-function DoMathType(results) {
-	if (MathType === 'ADDITION') {
-		results = results.filter(array => {
-			return array.reduce((acc, curr) => acc + curr, 0) === TargetValue;
-		});
-	} else if (MathType === 'MULTIPLICATION') {
-		results = results.filter(TempVar1 => {
-			const TempVar2 = TempVar1.reduce((acc, val) => acc * val, 1);
-			return TempVar2 == TargetValue;
-		});
-	}
-	for (let i = 0; i < results.length; i++) {
-		document.getElementById('Output').innerHTML += '<tr><td>' + results[i] + '</td></tr>';
-	}
+// Set math operation (ADDITION or MULTIPLICATION)
+function setMathType() {
+    MathType = document.getElementById('ADDMUL').value.toUpperCase();
 }
 
-//UserInput To Variable
-
-function SetMathType() {
-	MathType = document.getElementById('ADDMUL').value.toUpperCase();
-	console.log(MathType);
+// Set duplicate lock based on checkbox
+function setDuplicateLocked() {
+    AllowReusingNumbers = document.getElementById('DuplicateLockedCheckBox').checked;
 }
 
-function SetDuplicateLocked() {
-	AllowReusingNumbers = document.getElementById('DuplicateLockedCheckBox').checked ? 'YES' : 'NO';
-	console.log(AllowReusingNumbers);
+// Update combination length and display it
+function changeCombinationLength(increment) {
+    CombinationLength += increment;
+    document.getElementById('LengthText').innerHTML = CombinationLength;
 }
-
-function SetUniqueSets() {
-	UniqueSets = document.getElementById('UniqueSetsCheckBox').checked ? 'YES' : 'NO';
-	console.log(UniqueSets);
-}
-
-function AddLength() {
-	CombinationLength += 1;
-	document.getElementById('LengthText').innerHTML = CombinationLength;
-};
-
-function SubLength() {
-	CombinationLength -= 1;
-	document.getElementById('LengthText').innerHTML = CombinationLength;
-};
-
-
-function SetUserInput() {
-	UserInput = "[" + document.getElementById('UserSelectedVariables').value + "]";
-	TargetValue = document.getElementById('TargetValue').value;
-	console.log(TargetValue);
-	console.log(UserInput);
-}
-
