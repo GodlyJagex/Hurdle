@@ -1,38 +1,39 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
     <title>Numbers</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale = 1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        background-color: rgb(46, 46, 46);
+        color: rgb(43, 122, 192);
+        font-family: Arial, sans-serif;
+      }
+      
+      table {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      td {
+        font-size: 15px;
+        font-weight: bold;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .CustomTable {
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+      }
+    </style>
   </head>
 
-  <style>
-    .nobr {display:inline;}
-    body{
-      background-color: rgb(46, 46, 46);
-      color: rgb(43, 122, 192);
-    }
-    .table {
-      width: 100%;
-    }
-    td {
-	    font-size: 15px;
-	    font-weight: bold;
-	    text-align:center;
-    	vertical-align:middle;
-	    text-align:center;
-    }
-    .CustomTable {
-      width: 20%;
-      margin-left: auto;
-      margin-right: auto;
-	    text-align:center;
-    	vertical-align:middle;
-	    text-align:center;
-    }
-    </style>
-
   <body>
-    <table class="table">
+    <table>
       <tr>
         <td>Number Pool</td>
         <td>Combination Length</td>
@@ -41,31 +42,99 @@
         <td id="ADDMULTEXT">☐ Addition or Multiplication 🗹</td>
       </tr>
       <tr>
+        <td><input type="text" id="UserSelectedVariables" value="1,2,3,4,5,6"></td>
         <td>
-          <input type="text" id="UserSelectedVariables" value="1,2,3,4,5,6">
+          <span id="LengthText">3</span>
+          <button onclick="adjustLength(1)">+</button>
+          <button onclick="adjustLength(-1)">-</button>
         </td>
-        <td>
-          <p class="nobr" id="LengthText">3</p>
-          <button name="LengthTag" type="button" onclick="AddLength()">+</button>
-          <button name="LengthTag" type="button" onclick="SubLength()">-</button>
-        </td>
-        <td>
-          <input type="text" id="TargetValue" value="30"/>
-        </td>
-        <td>
-          <input type="checkbox" id="DuplicateLockedCheckBox" name="DuplicateLockedCheckBox" onclick="SetDuplicateLocked();"/>
-        </td>
-        <td>
-          <button type="button" onclick="SetMathType()">Toggle</button>
-        </td>
+        <td><input type="text" id="TargetValue" value="30"></td>
+        <td><input type="checkbox" id="DuplicateLockedCheckBox" onclick="SetDuplicateLocked()"></td>
+        <td><button onclick="toggleMathType()">Toggle</button></td>
       </tr>
     </table>
 
-      <button type="button" onclick="startProcess()">Start</button>
+    <button onclick="startProcess()">Start</button>
 
-    <table id="Output" class="CustomTable">
+    <table id="Output" class="CustomTable"></table>
 
-    </table>
+    <script>
+      let UserInput = [1, 2, 3, 4, 5, 6];
+      let CombinationLength = 3;
+      let AllowReusingNumbers = false;
+      let MathType = 'MULTIPLICATION';
+      let TargetValue = 30;
+
+      // Start process to find valid combinations
+      function startProcess() {
+        const userInputValue = document.getElementById('UserSelectedVariables').value;
+        const targetValue = parseInt(document.getElementById('TargetValue').value);
+        const outputElement = document.getElementById('Output');
+
+        if (!userInputValue || isNaN(targetValue)) {
+          outputElement.innerHTML = 'Please provide valid input and target value.';
+          return;
+        }
+
+        UserInput = userInputValue.split(',').map(Number);
+        TargetValue = targetValue;
+
+        outputElement.innerHTML = '';
+        const result = generateCombinations(UserInput, CombinationLength, AllowReusingNumbers, MathType, TargetValue);
+        
+        if (result.length === 0) {
+          outputElement.innerHTML = 'No valid combinations found.';
+        } else {
+          result.forEach(combination => {
+            outputElement.innerHTML += `<tr><td>${combination}</td></tr>`;
+          });
+        }
+      }
+
+      // Generate valid combinations based on inputs
+      function generateCombinations(userInput, combinationLength, allowReusingNumbers, mathType, targetValue) {
+        const combinations = [];
+
+        function generate(currentCombination, startIndex) {
+          if (currentCombination.length === combinationLength) {
+            let result = mathType === "ADDITION" ? currentCombination.reduce((sum, num) => sum + num, 0)
+                                                 : currentCombination.reduce((product, num) => product * num, 1);
+
+            if (result === targetValue) {
+              combinations.push([...currentCombination]);
+            }
+            return;
+          }
+
+          for (let i = startIndex; i < userInput.length; i++) {
+            currentCombination.push(userInput[i]);
+            generate(currentCombination, allowReusingNumbers ? i : i + 1);
+            currentCombination.pop();
+          }
+        }
+
+        generate([], 0);
+        return combinations;
+      }
+
+      // Toggle between math types (ADDITION / MULTIPLICATION)
+      function toggleMathType() {
+        MathType = MathType === 'MULTIPLICATION' ? 'ADDITION' : 'MULTIPLICATION';
+        document.getElementById('ADDMULTEXT').innerText = MathType === 'MULTIPLICATION' 
+          ? '☐ Addition or Multiplication 🗹' 
+          : '🗹 Addition or Multiplication ☐';
+      }
+
+      // Set if duplicates are allowed
+      function SetDuplicateLocked() {
+        AllowReusingNumbers = document.getElementById('DuplicateLockedCheckBox').checked;
+      }
+
+      // Adjust combination length
+      function adjustLength(delta) {
+        CombinationLength = Math.max(1, CombinationLength + delta);
+        document.getElementById('LengthText').innerText = CombinationLength;
+      }
+    </script>
   </body>
-  <script src="Java.js"></script>
 </html>
