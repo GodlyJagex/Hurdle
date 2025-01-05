@@ -38,7 +38,7 @@
         <td>Combination Length</td>
         <td>Target Value</td>
         <td>Allow Duplicates</td>
-        <td>🗹 Addition or Multiplication ☐</td>
+        <td id="ADDMULTEXT">☐ Addition or Multiplication 🗹</td>
       </tr>
       <tr>
         <td>
@@ -56,10 +56,7 @@
           <input type="checkbox" id="DuplicateLockedCheckBox" name="DuplicateLockedCheckBox" onclick="SetDuplicateLocked();"/>
         </td>
         <td>
-          <select id="ADDMUL" onchange="SetMathType(this)"> 
-            <option>Addition</option>
-            <option selected="selected">Multiplication</option>
-          </select>
+          <button type="button" onclick="SetMathType()">Toggle</button>
         </td>
       </tr>
     </table>
