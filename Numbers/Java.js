@@ -61,18 +61,26 @@ function generateCombinations(userInput, combinationLength, allowReusingNumbers,
     return combinations;
 }
 
-// Set math operation (ADDITION or MULTIPLICATION)
-function setMathType() {
-    MathType = document.getElementById('ADDMUL').value.toUpperCase();
+//UserInput To Variable
+
+function SetMathType() {
+	MathType = document.getElementById('ADDMUL').value.toUpperCase();
 }
 
-// Set duplicate lock based on checkbox
-function setDuplicateLocked() {
-    AllowReusingNumbers = document.getElementById('DuplicateLockedCheckBox').checked;
+function SetDuplicateLocked() {
+	AllowReusingNumbers = document.getElementById('DuplicateLockedCheckBox').checked ? 'YES' : 'NO';
 }
 
-// Update combination length and display it
-function changeCombinationLength(increment) {
-    CombinationLength += increment;
-    document.getElementById('LengthText').innerHTML = CombinationLength;
+function SetUniqueSets() {
+	UniqueSets = document.getElementById('UniqueSetsCheckBox').checked ? 'YES' : 'NO';
 }
+
+function AddLength() {
+	CombinationLength += 1;
+	document.getElementById('LengthText').innerHTML = CombinationLength;
+};
+
+function SubLength() {
+	CombinationLength -= 1;
+	document.getElementById('LengthText').innerHTML = CombinationLength;
+};
