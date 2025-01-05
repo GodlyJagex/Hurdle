@@ -64,23 +64,34 @@ function generateCombinations(userInput, combinationLength, allowReusingNumbers,
 //UserInput To Variable
 
 function SetMathType() {
-	MathType = document.getElementById('ADDMUL').value.toUpperCase();
+	if (MathType === "MULTIPLICATION"){
+		document.getElementById('ADDMULTEXT').innerHTML = "🗹 Addition or Multiplication ☐";
+		MathType = "ADDITION";
+	} else {
+		document.getElementById('ADDMULTEXT').innerHTML = "☐ Addition or Multiplication 🗹";
+		MathType = "MULTIPLICATION";
+	}
+	console.log(MathType);
 }
 
 function SetDuplicateLocked() {
 	AllowReusingNumbers = document.getElementById('DuplicateLockedCheckBox').checked ? 'YES' : 'NO';
+	console.log(AllowReusingNumbers);
 }
 
 function SetUniqueSets() {
 	UniqueSets = document.getElementById('UniqueSetsCheckBox').checked ? 'YES' : 'NO';
+	console.log(UniqueSets);
 }
 
 function AddLength() {
 	CombinationLength += 1;
 	document.getElementById('LengthText').innerHTML = CombinationLength;
+	console.log(CombinationLength);
 };
 
 function SubLength() {
 	CombinationLength -= 1;
 	document.getElementById('LengthText').innerHTML = CombinationLength;
+	console.log(CombinationLength);
 };
