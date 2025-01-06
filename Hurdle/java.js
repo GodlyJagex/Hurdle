@@ -56,33 +56,38 @@ document.addEventListener(
 	false,
 );
 
+// Compare Input with Answer
 function compare() {
-    let Used = new Array(Answer.length).fill(false);
-    let InputUsed = new Array(Input.length).fill(false);
-
-    for (let i = 0; i < Answer.length; i++) {
-        if (Answer[i] === Input[i]) {
-            Correct++;
-            Used[i] = true;
-            InputUsed[i] = true;
-        }
-    }
-
-    for (let i = 0; i < Answer.length; i++) {
-        if (!Used[i]) {
-            for (let j = 0; j < Input.length; j++) {
-                if (!InputUsed[j] && Answer[i] === Input[j]) {
-                    Incorrect++;
-                    InputUsed[j] = true;
-                    break;
-                }
-            }
-        }
-    }
-
+	Correct = 0;
+	Incorrect = 0;
+	const used = new Array(Answer.length).fill(false);
+	const inputUsed = new Array(Input.length).fill(false);
+  
+	// Check for correct letters
+	for (let i = 0; i < Answer.length; i++) {
+	  if (Answer[i] === Input[i]) {
+		Correct++;
+		used[i] = true;
+		inputUsed[i] = true;
+	  }
+	}
+  
+	// Check for incorrect but matching letters
+	for (let i = 0; i < Answer.length; i++) {
+	  if (!used[i]) {
+		for (let j = 0; j < Input.length; j++) {
+		  if (!inputUsed[j] && Answer[i] === Input[j]) {
+			Incorrect++;
+			inputUsed[j] = true;
+			break;
+		  }
+		}
+	  }
+	}
+  
 	editRow();
 	Init();
-}
+  }
 
 function Cheat() {
 	const Header = document.getElementById("title");
