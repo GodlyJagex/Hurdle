@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pathfinder Feat Map</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="Feats.js"></script>
     <style>
         body {
@@ -81,12 +82,18 @@
         .node {
             cursor: pointer;
         }
-        .node circle {
-            stroke: #fff;
-            stroke-width: 1.5px;
+        .node path, .node circle {
             transition: transform 0.2s ease-out, filter 0.2s ease-out;
         }
-        .node:hover circle {
+        .node > circle:not(.node-outline),
+        .node .node-outline {
+            stroke: #fff;
+            stroke-width: 1.5px;
+        }
+        .node path {
+            stroke: none;
+        }
+        .node:hover path, .node:hover circle {
             transform: scale(1.2);
             filter: drop-shadow(0 0 5px #fff);
         }
@@ -119,29 +126,33 @@
             opacity: 0;
             transition: opacity 0.2s;
         }
-        .node.highlighted circle {
-            stroke: #ffab40;
+        .node.highlighted > circle:not(.node-outline),
+        .node.highlighted .node-outline {
+            stroke: #000000;
             stroke-width: 3px;
         }
         .node.highlighted text {
             font-weight: bold;
-            fill: #ffab40;
+            fill: #fbff00;
         }
         .node.dimmed {
             opacity: 0.2;
         }
-        .node.selected-prereq circle {
-            stroke: #87cefa; /* Light Blue */
+        .node.selected-prereq > circle:not(.node-outline),
+        .node.selected-prereq .node-outline {
+            stroke: #87cefa;
             stroke-width: 3px;
             filter: drop-shadow(0 0 5px #87cefa);
         }
-        .node.selected-unlocked circle {
-            stroke: #98fb98; /* Pale Green */
+        .node.selected-unlocked > circle:not(.node-outline),
+        .node.selected-unlocked .node-outline {
+            stroke: #98fb98;
             stroke-width: 3px;
-             filter: drop-shadow(0 0 5px #98fb98);
+            filter: drop-shadow(0 0 5px #98fb98);
         }
-        .node.selected-main circle {
-             stroke: #ffeb3b; /* Yellow */
+        .node.selected-main > circle:not(.node-outline),
+        .node.selected-main .node-outline {
+             stroke: #ffeb3b;
              stroke-width: 4px;
              filter: drop-shadow(0 0 8px #ffeb3b);
         }
@@ -153,6 +164,61 @@
             stroke: #98fb98;
             stroke-opacity: 1;
         }
+        #settings-toggle {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+            color: #ccc;
+            transition: color 0.2s;
+        }
+        #settings-toggle:hover {
+            color: #fff;
+        }
+        .settings-panel {
+            position: fixed;
+            top: 55px;
+            right: 0;
+            width: 250px;
+            height: calc(100vh - 55px);
+            background-color: #2c2c2c;
+            border-left: 1px solid #444;
+            padding: 20px;
+            box-sizing: border-box;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .settings-panel.open {
+            transform: translateX(0);
+        }
+        .settings-panel h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #555;
+            padding-bottom: 10px;
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        #freeze-layout-btn {
+            width: 100%;
+            padding: 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #freeze-layout-btn.frozen {
+             background-color: #f44336;
+        }
     </style>
 </head>
 <body>
@@ -163,8 +229,9 @@
             <input type="text" id="search-box" placeholder="Search for a feat...">
         </div>
         <div class="legend">
-            <div class="legend-item"><div class="legend-color" style="background-color: #4e79a7;"></div><span>General</span></div>
-            <div class="legend-item"><div class="legend-color" style="background-color: #f28e2c;"></div><span>Combat</span></div>
+             <div class="legend-item"><div class="legend-color" style="background-color: #ffffff;"></div><span>General</span></div>
+            <div class="legend-item"><div class="legend-color" style="background-color: #ff0000;"></div><span>Combat</span></div>
+            <div class="legend-item"><div class="legend-color" style="background-color: #18ff4a;"></div><span>Teamwork</span></div>
             <div class="legend-item"><div class="legend-color" style="background-color: #e15759;"></div><span>Metamagic</span></div>
             <div class="legend-item"><div class="legend-color" style="background-color: #59a14f;"></div><span>Item Creation</span></div>
             <div class="legend-item"><div class="legend-color" style="background-color: #af7aa1;"></div><span>Racial</span></div>
@@ -172,10 +239,56 @@
         </div>
     </div>
 
+    <i id="settings-toggle" class="fa-solid fa-gear"></i>
+    <div id="settings-panel" class="settings-panel">
+        <h3>Display Settings</h3>
+        <div class="setting-item">
+            <label for="toggle-labels">Show Labels</label>
+            <input type="checkbox" id="toggle-labels" checked>
+        </div>
+        <div class="setting-item">
+            <label for="toggle-arrows">Show Arrowheads</label>
+            <input type="checkbox" id="toggle-arrows" checked>
+        </div>
+        <div class="setting-item">
+            <label for="toggle-dynamic-size">Dynamic Node Size</label>
+            <input type="checkbox" id="toggle-dynamic-size" checked>
+        </div>
+        <div class="setting-item">
+            <label for="toggle-pie-charts">Multi-Color Nodes</label>
+            <input type="checkbox" id="toggle-pie-charts" checked>
+        </div>
+        <div class="setting-item">
+            <label for="toggle-tooltips">Show Tooltips</label>
+            <input type="checkbox" id="toggle-tooltips" checked>
+        </div>
+         <div class="setting-item">
+            <label for="toggle-hover-highlight">Highlight on Hover</label>
+            <input type="checkbox" id="toggle-hover-highlight" checked>
+        </div>
+        <div class="setting-item">
+            <label for="toggle-drag">Enable Dragging</label>
+            <input type="checkbox" id="toggle-drag" checked>
+        </div>
+        <button id="freeze-layout-btn">Freeze Layout</button>
+    </div>
+
     <svg></svg>
     <div class="tooltip"></div>
 
     <script>
+        // --- SETTINGS STATE ---
+        const settings = {
+            showLabels: true,
+            showArrows: true,
+            dynamicNodeSize: true,
+            showPieCharts: true,
+            showTooltips: true,
+            highlightOnHover: true,
+            enableDrag: true,
+            layoutFrozen: false
+        };
+
         // --- DATA PREPARATION ---
         const featNames = new Set(featData.nodes.map(n => n.id));
         const prereqMap = new Map();
@@ -193,18 +306,11 @@
             if (memo.has(memoKey)) return memo.get(memoKey);
             if (!prereqMap.has(featId)) return false;
             const directPrereqs = prereqMap.get(featId);
-            if (directPrereqs.has(prereqId)) {
-                memo.set(memoKey, true);
-                return true;
-            }
+            if (directPrereqs.has(prereqId)) { memo.set(memoKey, true); return true; }
             for (const p of directPrereqs) {
-                if (hasPrerequisite(p, prereqId)) {
-                    memo.set(memoKey, true);
-                    return true;
-                }
+                if (hasPrerequisite(p, prereqId)) { memo.set(memoKey, true); return true; }
             }
-            memo.set(memoKey, false);
-            return false;
+            memo.set(memoKey, false); return false;
         }
         const links = [];
         featData.nodes.forEach(targetNode => {
@@ -214,144 +320,171 @@
                     if (sourcePrereq === otherPrereq) return false;
                     return hasPrerequisite(otherPrereq, sourcePrereq);
                 });
-                if (!isRedundant) {
-                    links.push({ source: sourcePrereq, target: targetNode.id });
-                }
+                if (!isRedundant) { links.push({ source: sourcePrereq, target: targetNode.id }); }
             });
         });
         const outDegrees = new Map(featData.nodes.map(node => [node.id, 0]));
         links.forEach(l => {
-            outDegrees.set(l.source.id, outDegrees.get(l.source.id) + 1);
+            const sourceId = l.source.id || l.source;
+            outDegrees.set(sourceId, outDegrees.get(sourceId) + 1);
         });
-        const radiusScale = d3.scaleSqrt()
-            .domain([0, d3.max(Array.from(outDegrees.values()))])
-            .range([6, 18]);
 
         // --- D3 SETUP ---
         const width = window.innerWidth;
         const height = window.innerHeight - 55;
-        const svg = d3.select("svg")
-            .attr("viewBox", [-width / 2, -height / 2, width, height]);
+        const svg = d3.select("svg").attr("viewBox", [-width / 2, -height / 2, width, height]);
         const g = svg.append("g");
-        svg.on("click", (event) => {
-            if (event.target.nodeName === 'svg' || event.target.nodeName === 'g') {
-                 clearHighlights();
-            }
-        });
-        const zoom = d3.zoom().on("zoom", (event) => {
-            g.attr("transform", event.transform);
-        });
+        svg.on("click", (event) => { if (event.target.nodeName === 'svg' || event.target.nodeName === 'g') { clearHighlights(); } });
+        const zoom = d3.zoom().on("zoom", (event) => g.attr("transform", event.transform));
         svg.call(zoom);
         const tooltip = d3.select(".tooltip");
-        const color = d3.scaleOrdinal(d3.schemeTableau10)
-            .domain(["General", "Combat", "Metamagic", "Item Creation", "Racial", "Style"]);
+        const color = d3.scaleOrdinal()
+            .domain(["General", "Combat", "Teamwork", "Metamagic", "Item Creation", "Racial", "Style"])
+            .range(["#ffffff", "#ff0000", "#18ff4a", "#e15759", "#59a14f", "#af7aa1", "#edc949"]);
+        const defs = svg.append('defs');
+        defs.append('marker').attr('id', 'arrow').attr('viewBox', '0 -5 10 10').attr('refX', 0).attr('refY', 0).attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto').append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#999');
+        
+        // --- SIMULATION ---
+        const metamagicClusterX = width / 3;
+        const metamagicClusterY = -height / 3;
 
         const simulation = d3.forceSimulation(featData.nodes)
             .force("link", d3.forceLink(links).id(d => d.id).distance(100).strength(0.5))
             .force("charge", d3.forceManyBody().strength(-300))
-            .force("x", d3.forceX().strength(0.05))
-            .force("y", d3.forceY().strength(0.05))
+            .force("x", d3.forceX().strength(d => {
+                const isMetamagic = d.group === "Metamagic" || (Array.isArray(d.group) && d.group.includes("Metamagic"));
+                return isMetamagic ? 0.8 : 0.05;
+            }).x(d => {
+                const isMetamagic = d.group === "Metamagic" || (Array.isArray(d.group) && d.group.includes("Metamagic"));
+                return isMetamagic ? metamagicClusterX : 0;
+            }))
+            .force("y", d3.forceY().strength(d => {
+                const isMetamagic = d.group === "Metamagic" || (Array.isArray(d.group) && d.group.includes("Metamagic"));
+                return isMetamagic ? 0.8 : 0.05;
+            }).y(d => {
+                const isMetamagic = d.group === "Metamagic" || (Array.isArray(d.group) && d.group.includes("Metamagic"));
+                return isMetamagic ? metamagicClusterY : 0;
+            }))
             .on("tick", ticked);
-            
-        const defs = svg.append('defs');
+
+        let link = g.append("g").attr("class", "links").selectAll("line").data(links).join("line").attr("class", "link");
+        let node = g.append("g").attr("class", "nodes").selectAll("g").data(featData.nodes).join("g").attr("class", "node");
         
-        // --- DRAW ELEMENTS ---
-        let link = g.append("g")
-            .attr("class", "links")
-            .selectAll("line")
-            .data(links)
-            .join("line")
-            .attr("class", "link");
+        function updateNodeAppearance() {
+            const defaultRadius = 8;
+            const radiusScale = d3.scaleSqrt().domain([0, d3.max(Array.from(outDegrees.values()))]).range([6, 18]);
+            node.selectAll("circle, path").remove();
+            node.each(function(d) {
+                const nodeEl = d3.select(this);
+                const groups = Array.isArray(d.group) ? d.group : [d.group];
+                const radius = settings.dynamicNodeSize ? radiusScale(outDegrees.get(d.id)) : defaultRadius;
+                if (settings.showPieCharts && groups.length > 1) {
+                    const pie = d3.pie().value(1).sort(null);
+                    const arc = d3.arc().innerRadius(0).outerRadius(radius);
+                    nodeEl.selectAll('path').data(pie(groups)).enter().append('path')
+                        .attr('d', arc).attr('fill', d => color(d.data));
+                    nodeEl.append("circle").attr("class", "node-outline").attr("r", radius).attr("fill", "none");
+                } else {
+                    nodeEl.append("circle").attr("r", radius).attr("fill", color(groups[0] || "General"));
+                }
+            });
+            node.selectAll("text").remove();
+            node.append("text")
+                .text(d => d.id)
+                .attr("x", d => (settings.dynamicNodeSize ? radiusScale(outDegrees.get(d.id)) : defaultRadius) + 3)
+                .attr("y", 3)
+                .style("display", settings.showLabels ? "block" : "none");
+        }
+
+        function updateLinkAppearance() {
+            link.attr('marker-end', settings.showArrows ? 'url(#arrow)' : null);
+        }
+
+        function updateInteractivity() {
+            if (settings.enableDrag) { node.call(drag(simulation)); } 
+            else { node.on(".drag", null); }
             
-        let node = g.append("g")
-            .attr("class", "nodes")
-            .selectAll("g")
-            .data(featData.nodes)
-            .join("g")
-            .attr("class", "node")
-            .call(drag(simulation));
+            const mouseoverHandler = settings.showTooltips || settings.highlightOnHover ? function(event, d) {
+                if (settings.showTooltips) {
+                    tooltip.transition().duration(200).style("opacity", .9);
+                    const groupText = Array.isArray(d.group) ? d.group.join(' / ') : d.group;
+                    tooltip.html(`<strong>${d.id}</strong><br/><em>${groupText} Feat</em><br/><small>Prereqs: ${d.prereqs || "None"}</small>`)
+                        .style("left", `${event.pageX + 15}px`).style("top", `${event.pageY - 28}px`);
+                }
+                if (settings.highlightOnHover) {
+                     link.style('stroke', l => (l.source.id === d.id || l.target.id === d.id) ? '#ffab40' : null)
+                        .style('stroke-opacity', l => (l.source.id === d.id || l.target.id === d.id) ? 1 : null);
+                }
+            } : null;
 
-        node.append("circle")
-            .attr("r", d => radiusScale(outDegrees.get(d.id)))
-            // MODIFIED: Handle both string and array for group color.
-            // It will use the first group in an array for coloring.
-            .attr("fill", d => color(Array.isArray(d.group) ? d.group[0] : d.group));
-            
-        node.append("text")
-            .text(d => d.id)
-            .attr("x", d => radiusScale(outDegrees.get(d.id)) + 3)
-            .attr("y", 3);
+            const mouseoutHandler = settings.showTooltips || settings.highlightOnHover ? function() {
+                if (settings.showTooltips) tooltip.transition().duration(500).style("opacity", 0);
+                if (settings.highlightOnHover && d3.selectAll(".selected-main").empty()) {
+                    link.style('stroke', null).style('stroke-opacity', null);
+                }
+            } : null;
 
-        // --- EVENT HANDLERS ---
-        node.on("mouseover", function(event, d) {
-            tooltip.transition().duration(200).style("opacity", .9);
+            node.on("mouseover", mouseoverHandler).on("mouseout", mouseoutHandler).on("click", highlightChain);
+        }
+        
+        updateNodeAppearance();
+        updateLinkAppearance();
+        updateInteractivity();
 
-            // MODIFIED: Display all groups in the tooltip, joined by " / ".
-            const groupText = Array.isArray(d.group) ? d.group.join(' / ') : d.group;
-            
-            tooltip.html(`<strong>${d.id}</strong><br/><em>${groupText} Feat</em><br/><small>Prereqs: ${d.prereqs || "None"}</small>`)
-                .style("left", (event.pageX + 15) + "px")
-                .style("top", (event.pageY - 28) + "px");
-
-            link
-                .style('stroke', l => (l.source.id === d.id || l.target.id === d.id) ? '#ffab40' : null)
-                .style('stroke-opacity', l => (l.source.id === d.id || l.target.id === d.id) ? 1 : null);
-        })
-        .on("mouseout", function(d) {
-            tooltip.transition().duration(500).style("opacity", 0);
-            if (d3.selectAll(".selected-main").empty()) {
-                link.style('stroke', null).style('stroke-opacity', null);
+        d3.select("#settings-toggle").on("click", () => d3.select("#settings-panel").classed("open", !d3.select("#settings-panel").classed("open")));
+        d3.select("#toggle-labels").on("change", function() { settings.showLabels = this.checked; node.selectAll('text').style('display', settings.showLabels ? 'block' : 'none'); });
+        d3.select("#toggle-arrows").on("change", function() { settings.showArrows = this.checked; updateLinkAppearance(); });
+        d3.select("#toggle-dynamic-size").on("change", function() { settings.dynamicNodeSize = this.checked; updateNodeAppearance(); ticked(); });
+        d3.select("#toggle-pie-charts").on("change", function() { settings.showPieCharts = this.checked; updateNodeAppearance(); });
+        d3.select("#toggle-tooltips").on("change", function() { settings.showTooltips = this.checked; updateInteractivity(); });
+        d3.select("#toggle-hover-highlight").on("change", function() { settings.highlightOnHover = this.checked; updateInteractivity(); });
+        d3.select("#toggle-drag").on("change", function() { settings.enableDrag = this.checked; updateInteractivity(); });
+        d3.select("#freeze-layout-btn").on("click", function() {
+            settings.layoutFrozen = !settings.layoutFrozen;
+            if (settings.layoutFrozen) {
+                simulation.stop();
+                this.textContent = "Unfreeze Layout";
+                d3.select(this).classed("frozen", true);
+            } else {
+                simulation.alpha(0.3).restart();
+                this.textContent = "Freeze Layout";
+                d3.select(this).classed("frozen", false);
             }
-        })
-        .on("click", highlightChain);
-
+        });
+        
         function ticked() {
             node.attr("transform", d => `translate(${d.x},${d.y})`);
-            
+            const defaultRadius = 8;
+            const radiusScale = d3.scaleSqrt().domain([0, d3.max(Array.from(outDegrees.values()))]).range([6, 18]);
             link.each(function(d) {
-                const targetRadius = radiusScale(outDegrees.get(d.target.id));
+                let targetRadius = defaultRadius;
+                const targetId = typeof d.target === 'object' ? d.target.id : d.target;
+                if (settings.dynamicNodeSize) {
+                    targetRadius = radiusScale(outDegrees.get(targetId)) || defaultRadius;
+                }
                 const dx = d.target.x - d.source.x;
                 const dy = d.target.y - d.source.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                const targetX = d.target.x - (dx / distance) * (targetRadius + 5);
-                const targetY = d.target.y - (dy / distance) * (targetRadius + 5);
-
-                d3.select(this)
-                    .attr("x1", d.source.x)
-                    .attr("y1", d.source.y)
-                    .attr("x2", targetX)
-                    .attr("y2", targetY)
-                    .attr('marker-end', 'url(#arrow)');
+                if (distance > 0) {
+                    const targetX = d.target.x - (dx / distance) * (targetRadius + 5);
+                    const targetY = d.target.y - (dy / distance) * (targetRadius + 5);
+                    d3.select(this).attr("x1", d.source.x).attr("y1", d.source.y).attr("x2", targetX).attr("y2", targetY);
+                }
             });
         }
         
-        defs.append('marker')
-            .attr('id', 'arrow')
-            .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 0).attr('refY', 0)
-            .attr('markerWidth', 6).attr('markerHeight', 6)
-            .attr('orient', 'auto')
-            .append('path')
-            .attr('d', 'M0,-5L10,0L0,5')
-            .attr('fill', '#999');
-
         function drag(simulation) {
           function dragstarted(event, d) { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }
           function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
-          function dragended(event, d) { if (!event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }
+          function dragended(event, d) { if (!event.active) simulation.alphaTarget(0); if (!settings.layoutFrozen) { d.fx = null; d.fy = null; } }
           return d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended);
         }
 
-        // --- SEARCH & HIGHLIGHT LOGIC ---
         const searchInput = d3.select("#search-box");
         searchInput.on("input", function() {
             const searchTerm = this.value.trim().toLowerCase();
             clearHighlights();
-            if (searchTerm === "") {
-                node.classed("dimmed", false).classed("highlighted", false);
-                return;
-            }
+            if (searchTerm === "") { node.classed("dimmed", false).classed("highlighted", false); return; }
             node.classed("dimmed", true).classed("highlighted", false);
             const matchedNodes = node.filter(d => d.id.toLowerCase().includes(searchTerm));
             matchedNodes.classed("dimmed", false).classed("highlighted", true);
@@ -362,29 +495,18 @@
                 svg.transition().duration(750).call(zoom.transform, transform);
             }
         });
-        
         function clearHighlights() {
             node.classed("dimmed", false).classed("selected-main", false).classed("selected-prereq", false).classed("selected-unlocked", false);
             link.attr("class", "link").style('stroke', null).style('stroke-opacity', null);
         }
-
         function highlightChain(event, d) {
             event.stopPropagation();
             clearHighlights();
             const prereqs = new Set();
             const unlocked = new Set();
-            function findPrereqs(featId) {
-                if (!featId || prereqs.has(featId)) return;
-                prereqs.add(featId);
-                links.forEach(l => { if (l.target.id === featId) findPrereqs(l.source.id); });
-            }
-            function findUnlocked(featId) {
-                if (!featId || unlocked.has(featId)) return;
-                unlocked.add(featId);
-                links.forEach(l => { if (l.source.id === featId) findUnlocked(l.target.id); });
-            }
-            findPrereqs(d.id);
-            findUnlocked(d.id);
+            function findPrereqs(featId) { if (!featId || prereqs.has(featId)) return; prereqs.add(featId); links.forEach(l => { if (l.target.id === featId) findPrereqs(l.source.id); }); }
+            function findUnlocked(featId) { if (!featId || unlocked.has(featId)) return; unlocked.add(featId); links.forEach(l => { if (l.source.id === featId) findUnlocked(l.target.id); }); }
+            findPrereqs(d.id); findUnlocked(d.id);
             node.classed("dimmed", true);
             node.filter(n => prereqs.has(n.id)).classed("dimmed", false).classed("selected-prereq", true);
             node.filter(n => unlocked.has(n.id)).classed("dimmed", false).classed("selected-unlocked", true);
@@ -397,6 +519,5 @@
             });
         }
     </script>
-
 </body>
 </html>
