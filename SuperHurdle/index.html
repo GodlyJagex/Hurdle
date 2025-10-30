@@ -15,8 +15,11 @@
             --color-border: #d3d6da;
             --color-tile-border: #878a8c;
             --color-info-text: #000000;
-            --color-reveal-btn: #dc3545; /* Red for reveal/lose */
-            --color-disclaimer: #888; /* Gray for disclaimer text */
+            --color-reveal-btn: #dc3545;
+            --color-new-game-btn: #007bff;
+            --color-disclaimer: #888;
+            --color-toast-bg: #333;
+            --color-toast-text: #fff;
         }
 
         body {
@@ -27,7 +30,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center; /* Center the content vertically */
+            justify-content: center;
             min-height: 95vh;
             margin: 0;
         }
@@ -52,7 +55,7 @@
             margin: 10px 0;
             font-size: 1.2rem;
             display: flex;
-            flex-direction: column; /* Changed to column for disclaimer */
+            flex-direction: column; 
             align-items: center;
         }
         
@@ -63,6 +66,11 @@
 
         .setting label {
             margin-right: 10px;
+        }
+        
+        /* NEW: Disabled label style */
+        .setting label.disabled {
+            color: #999;
         }
 
         .setting input[type="number"] {
@@ -78,11 +86,10 @@
             color: #999;
         }
         
-        /* NEW: Disclaimer Style */
         .setting-disclaimer {
             font-size: 0.9rem;
             color: var(--color-disclaimer);
-            height: 1.2em; /* Reserve space */
+            height: 1.2em; 
             margin-top: 5px;
             font-style: italic;
         }
@@ -93,7 +100,6 @@
             margin-right: 5px;
         }
         
-        /* Checkbox settings don't need disclaimer space */
         .setting.setting-checkbox {
             flex-direction: row;
         }
@@ -149,6 +155,22 @@
             color: var(--color-reveal-btn);
         }
 
+        #new-game-btn {
+            display: none; 
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+            background-color: var(--color-new-game-btn);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
         #reveal-answer-btn {
             display: none;
             position: absolute;
@@ -176,7 +198,6 @@
 
         .guess-row {
             display: grid;
-            /* grid-template-columns is now set by JS */
             grid-gap: 5px;
         }
 
@@ -193,7 +214,6 @@
             box-sizing: border-box;
         }
 
-        /* Tiles for 11-20 letters */
         .length-large .guess-tile {
             width: 35px;
             height: 35px;
@@ -205,7 +225,6 @@
             font-size: 1.2rem;
         }
         
-        /* NEW: Tiles for 21-50 letters */
         .length-xlarge .guess-tile {
             width: 20px;
             height: 20px;
@@ -219,32 +238,56 @@
             border-width: 1px;
         }
 
-
         .guess-tile.filled {
             border-color: #565758;
         }
+        
+        /* --- Classic Mode Tile Colors --- */
+        .guess-tile.correct {
+            background-color: var(--color-correct);
+            border-color: var(--color-correct);
+            color: white;
+        }
+        .guess-tile.present {
+            background-color: var(--color-present);
+            border-color: var(--color-present);
+            color: white;
+        }
+        .guess-tile.absent {
+            background-color: var(--color-absent);
+            border-color: var(--color-absent);
+            color: white;
+        }
+        /* --- Flip Animation --- */
+        .flip {
+            animation: flip 0.6s ease-out;
+            animation-fill-mode: forwards;
+        }
+        @keyframes flip {
+            0%   { transform: rotateX(0deg); }
+            50%  { transform: rotateX(90deg); }
+            100% { transform: rotateX(0deg); }
+        }
 
+        /* --- (Hurdle Mode Info Box) --- */
         .info-box {
             background-color: #cccccc;
             border-color: #878a8c;
             color: var(--color-info-text);
             font-size: 2rem;
         }
-
         .info-box.correct-info {
             background-color: var(--color-correct);
             border-color: var(--color-correct);
         }
-
         .info-box.present-info {
             background-color: var(--color-present);
             border-color: var(--color-present);
         }
-
+        /* --- (Shake Animation) --- */
         .guess-row.shake {
             animation: shake 0.5s;
         }
-
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
@@ -286,8 +329,56 @@
             min-width: 65px;
         }
 
-        .key.hover {
+        .key:hover {
             background-color: #c0c3c6;
+        }
+        
+        /* --- Keyboard Key States --- */
+        .key.key-used {
+            background-color: var(--color-absent);
+            color: white;
+        }
+        .key.correct {
+            background-color: var(--color-correct);
+            color: white;
+        }
+        .key.present {
+            background-color: var(--color-present);
+            color: white;
+        }
+        .key.absent {
+            background-color: var(--color-absent);
+            color: white;
+        }
+        
+        /* --- Toast Notification Styles --- */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .toast {
+            background-color: var(--color-toast-bg);
+            color: var(--color-toast-text);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
     </style>
@@ -322,11 +413,29 @@
             <label for="setting-reveal">Enable Reveal Button</label>
         </div>
         
+        <div class="setting setting-checkbox">
+            <input type="checkbox" id="setting-classic-mode">
+            <label for="setting-classic-mode">Classic Mode (Color Tiles)</label>
+        </div>
+
+        <div class="setting setting-checkbox">
+            <input type="checkbox" id="setting-hard-mode" disabled>
+            <label for="setting-hard-mode" id="label-hard-mode" class="disabled">Hard Mode</label>
+        </div>
+        
+        <div class="setting setting-checkbox">
+            <input type="checkbox" id="setting-highlight-keys" checked>
+            <label for="setting-highlight-keys">Highlight Used Keys</label>
+        </div>
+        
         <button id="start-game-btn">Start Game</button>
     </div>
 
+    <div id="toast-container"></div>
+
     <div id="game-container">
         <header>
+            <button id="new-game-btn">New Game</button>
             <h1 id="title">HURDLE</h1>
             <button id="reveal-answer-btn">Reveal Answer</button>
         </header>
@@ -338,8 +447,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // WORD_LISTS is loaded from word_lists.js
-
             // --- STATE ---
             let WORD_LENGTH = 5; 
             let GUESS_COUNT = 6; 
@@ -348,6 +455,11 @@
             let currentRow = 0;
             let currentGuess = "";
             let isGameOver = false;
+            let highlightKeysEnabled = true;
+            let classicModeEnabled = false; 
+            let hardModeEnabled = false; // NEW
+            let letterStates = {}; // RENAMED from keyStates
+            let previousGuess = ""; // NEW: For Hard Mode
 
             // --- ELEMENTS ---
             const settingsScreen = document.getElementById("settings-screen");
@@ -357,12 +469,18 @@
             const settingGuesses = document.getElementById("setting-guesses");
             const settingInfinite = document.getElementById("setting-infinite");
             const settingReveal = document.getElementById("setting-reveal");
-            const lengthDisclaimer = document.getElementById("length-disclaimer"); // NEW
+            const settingClassicMode = document.getElementById("setting-classic-mode"); 
+            const settingHardMode = document.getElementById("setting-hard-mode"); // NEW
+            const labelHardMode = document.getElementById("label-hard-mode"); // NEW
+            const settingHighlightKeys = document.getElementById("setting-highlight-keys"); 
+            const lengthDisclaimer = document.getElementById("length-disclaimer");
             
             const gameBoard = document.getElementById("game-board");
             const keyboard = document.getElementById("keyboard");
             const revealAnswerBtn = document.getElementById("reveal-answer-btn");
+            const newGameBtn = document.getElementById("new-game-btn");
             const titleElement = document.getElementById("title");
+            const toastContainer = document.getElementById("toast-container"); 
             
             const keysLayout = [
                 "q", "w", "e", "r", "t", "y", "u", "i", "o", "p",
@@ -370,7 +488,26 @@
                 "enter", "z", "x", "c", "v", "b", "n", "m", "backspace"
             ];
 
-            // --- NEW: Disclaimer Function ---
+            // --- Toast Notification Function ---
+            function showToast(message) {
+                const toast = document.createElement("div");
+                toast.classList.add("toast");
+                toast.textContent = message;
+                toastContainer.appendChild(toast);
+
+                setTimeout(() => { toast.classList.add("show"); }, 10); 
+
+                setTimeout(() => {
+                    toast.classList.remove("show");
+                    toast.addEventListener("transitionend", () => {
+                        if (toast.parentElement) {
+                            toast.parentElement.removeChild(toast);
+                        }
+                    }, { once: true });
+                }, 2000); 
+            }
+
+            // --- Disclaimer Function ---
             function updateLengthDisclaimer() {
                 const length = parseInt(settingLength.value, 10);
                 let count = 0;
@@ -400,16 +537,46 @@
                 settingGuesses.disabled = settingInfinite.checked;
             });
             
-            settingLength.addEventListener("input", updateLengthDisclaimer); // NEW
+            settingLength.addEventListener("input", updateLengthDisclaimer); 
+
+            settingClassicMode.addEventListener("change", () => {
+                if (settingClassicMode.checked) {
+                    settingHighlightKeys.checked = true;
+                    settingHighlightKeys.disabled = true;
+                    // NEW: Enable Hard Mode
+                    settingHardMode.disabled = false;
+                    labelHardMode.classList.remove("disabled");
+                } else {
+                    settingHighlightKeys.disabled = false;
+                    // NEW: Disable and uncheck Hard Mode
+                    settingHardMode.checked = false;
+                    settingHardMode.disabled = true;
+                    labelHardMode.classList.add("disabled");
+                }
+            });
+
+            newGameBtn.addEventListener("click", () => {
+                gameContainer.style.display = 'none';
+                settingsScreen.style.display = 'flex';
+                updateLengthDisclaimer(); 
+            });
 
             // --- START GAME ---
             startGameBtn.addEventListener("click", () => {
                 // 1. Get Settings
                 const isInfinite = settingInfinite.checked;
                 const canReveal = settingReveal.checked;
+                classicModeEnabled = settingClassicMode.checked;
+                hardModeEnabled = settingHardMode.checked; // NEW
+                
+                if (classicModeEnabled) {
+                    highlightKeysEnabled = true;
+                } else {
+                    highlightKeysEnabled = settingHighlightKeys.checked;
+                }
                 
                 let length = parseInt(settingLength.value, 10);
-                WORD_LENGTH = (length >= 1 && length <= 50) ? length : 5; // Validate length
+                WORD_LENGTH = (length >= 1 && length <= 50) ? length : 5; 
                 
                 if (isInfinite) {
                     GUESS_COUNT = 999;
@@ -418,13 +585,11 @@
                     GUESS_COUNT = (guesses > 0 && guesses <= 10) ? guesses : 6;
                 }
                 
-                // 2. Check if word list for that length exists
                 if (!WORD_LISTS[WORD_LENGTH] || WORD_LISTS[WORD_LENGTH].size === 0) {
-                    alert(`Sorry, no words of length ${WORD_LENGTH} were found in your word list. Please select another length.`);
+                    showToast(`No words of length ${WORD_LENGTH} found.`);
                     return;
                 }
                 
-                // 3. Set class on game board for dynamic sizing
                 gameBoard.classList.remove('length-large', 'length-xlarge');
                 if (WORD_LENGTH > 20) {
                     gameBoard.classList.add('length-xlarge');
@@ -432,7 +597,6 @@
                     gameBoard.classList.add('length-large');
                 }
 
-                // 4. Swap screens
                 settingsScreen.style.display = 'none';
                 gameContainer.style.display = 'flex';
                 
@@ -444,18 +608,20 @@
                 gameBoard.innerHTML = ''; 
                 currentRow = 0;
                 currentGuess = "";
+                previousGuess = ""; // NEW: Reset previous guess
                 isGameOver = false;
+                letterStates = {}; // RENAMED
 
                 titleElement.innerHTML = 'HURDLE';
                 titleElement.classList.remove('title-win', 'title-lose');
-
+                
+                newGameBtn.style.display = 'block'; 
                 if (canReveal) {
                     revealAnswerBtn.style.display = 'block';
                 } else {
                     revealAnswerBtn.style.display = 'none';
                 }
 
-                // Create keyboard
                 keyboard.innerHTML = ''; 
                 const row1 = document.createElement("div");
                 row1.className = "keyboard-row";
@@ -473,13 +639,13 @@
                 keyboard.appendChild(row1);
                 keyboard.appendChild(row2);
                 keyboard.appendChild(row3);
+                
+                updateKeyboard(); 
 
-                // --- Word Selection ---
                 TARGET_WORDS_BY_LENGTH = Array.from(WORD_LISTS[WORD_LENGTH]);
                 targetWord = TARGET_WORDS_BY_LENGTH[Math.floor(Math.random() * TARGET_WORDS_BY_LENGTH.length)];
                 console.log("Target Word:", targetWord);
 
-                // Add Event Listeners
                 document.removeEventListener("keydown", handlePhysicalKey);
                 keyboard.removeEventListener("click", handleVirtualKey);
                 revealAnswerBtn.removeEventListener("click", handleRevealAnswer);
@@ -499,12 +665,12 @@
                 
                 if (state === 'win') {
                     titleElement.classList.add('title-win');
-                } else { // 'lose' or 'reveal'
+                } else { 
                     titleElement.classList.add('title-lose');
                 }
                 
                 isGameOver = true;
-                revealAnswerBtn.style.display = 'none';
+                revealAnswerBtn.style.display = 'none'; 
             }
 
             function handleRevealAnswer() {
@@ -515,7 +681,12 @@
             function addNewGuessRow() {
                 let row = document.createElement("div");
                 row.className = "guess-row";
-                row.style.gridTemplateColumns = `repeat(${WORD_LENGTH}, 1fr) 0.5fr 0.5fr`;
+                
+                if (classicModeEnabled) {
+                    row.style.gridTemplateColumns = `repeat(${WORD_LENGTH}, 1fr)`;
+                } else {
+                    row.style.gridTemplateColumns = `repeat(${WORD_LENGTH}, 1fr) 0.5fr 0.5fr`;
+                }
 
                 for (let j = 0; j < WORD_LENGTH; j++) {
                     let tile = document.createElement("div");
@@ -523,15 +694,18 @@
                     tile.id = `tile-${currentRow}-${j}`;
                     row.appendChild(tile);
                 }
-                let correctInfoBox = document.createElement("div");
-                correctInfoBox.className = "info-box correct-info";
-                correctInfoBox.id = `info-correct-${currentRow}`;
-                row.appendChild(correctInfoBox);
+                
+                if (!classicModeEnabled) {
+                    let correctInfoBox = document.createElement("div");
+                    correctInfoBox.className = "info-box correct-info";
+                    correctInfoBox.id = `info-correct-${currentRow}`;
+                    row.appendChild(correctInfoBox);
 
-                let presentInfoBox = document.createElement("div");
-                presentInfoBox.className = "info-box present-info";
-                presentInfoBox.id = `info-present-${currentRow}`;
-                row.appendChild(presentInfoBox);
+                    let presentInfoBox = document.createElement("div");
+                    presentInfoBox.className = "info-box present-info";
+                    presentInfoBox.id = `info-present-${currentRow}`;
+                    row.appendChild(presentInfoBox);
+                }
 
                 gameBoard.appendChild(row);
             }
@@ -548,6 +722,69 @@
                     keyElement.textContent = key;
                 }
                 return keyElement;
+            }
+            
+            function applyTileState(tile, state, index) {
+                setTimeout(() => {
+                    tile.classList.add('flip');
+                    setTimeout(() => {
+                        tile.classList.add(state);
+                    }, 300); 
+                }, index * 300); 
+            }
+
+            function updateKeyboard() {
+                const keys = keyboard.querySelectorAll('.key');
+                keys.forEach(keyElement => {
+                    const letter = keyElement.dataset.key;
+                    if (!letter) return;
+                    
+                    keyElement.classList.remove('key-used', 'correct', 'present', 'absent');
+
+                    const state = letterStates[letter];
+                    if (classicModeEnabled) {
+                        if (state === 'correct') {
+                            keyElement.classList.add('correct');
+                        } else if (state === 'present') {
+                            keyElement.classList.add('present');
+                        } else if (state === 'absent') {
+                            keyElement.classList.add('absent');
+                        }
+                    } else if (highlightKeysEnabled) {
+                        if (state === 'used') {
+                            keyElement.classList.add('key-used');
+                        }
+                    }
+                });
+            }
+
+            // --- NEW: Hard Mode Validation ---
+            function isValidHardModeGuess() {
+                if (!hardModeEnabled || currentRow === 0) {
+                    return true; // Not in hard mode or first guess
+                }
+                
+                const guess = currentGuess.split('');
+
+                // Rule 1: Check for 'correct' letters
+                for (let i = 0; i < WORD_LENGTH; i++) {
+                    const letter = previousGuess[i];
+                    if (letterStates[letter] === 'correct' && guess[i] !== letter) {
+                        showToast(`Guess must use ${letter.toUpperCase()} in position ${i + 1}`);
+                        return false;
+                    }
+                }
+
+                // Rule 2: Check for 'present' letters
+                const presentLetters = Object.keys(letterStates).filter(k => letterStates[k] === 'present');
+                for (const letter of presentLetters) {
+                    if (!guess.includes(letter)) {
+                        showToast(`Guess must contain ${letter.toUpperCase()}`);
+                        return false;
+                    }
+                }
+                
+                return true;
             }
 
             function handlePhysicalKey(e) {
@@ -593,13 +830,23 @@
                 
                 if (currentGuess.length !== WORD_LENGTH) {
                     shakeRow();
+                    showToast("Not enough letters");
                     return;
                 }
 
                 if (!WORD_LISTS[WORD_LENGTH].has(currentGuess)) {
                     shakeRow();
+                    showToast("Not in word list");
                     return;
                 }
+                
+                // --- NEW: Hard Mode Check ---
+                if (!isValidHardModeGuess()) {
+                    shakeRow();
+                    // Toast is shown by isValidHardModeGuess()
+                    return;
+                }
+                
                 revealGuess();
             }
 
@@ -615,7 +862,7 @@
                         }
                     }
                 }
-                if (currentGuess.length < WORD_LENGTH) {
+                if (currentGuess.length < WORD_LENGTH && !classicModeEnabled) {
                     const correctBox = document.getElementById(`info-correct-${currentRow}`);
                     const presentBox = document.getElementById(`info-present-${currentRow}`);
                     if (correctBox) correctBox.textContent = "";
@@ -636,40 +883,80 @@
             function revealGuess() {
                 const guess = currentGuess.split('');
                 const answer = targetWord.split('');
-
-                let correctCount = 0;
-                let presentCount = 0;
-
-                let tempAnswer = [...answer];
-                let tempGuess = [...guess];
-
-                for (let i = 0; i < WORD_LENGTH; i++) {
-                    if (tempGuess[i] === tempAnswer[i]) {
-                        correctCount++;
-                        tempGuess[i] = null;
-                        tempAnswer[i] = null;
-                    }
-                }
-
-                for (let i = 0; i < WORD_LENGTH; i++) {
-                    if (tempGuess[i] !== null) {
-                        const answerIndex = tempAnswer.indexOf(tempGuess[i]);
-                        if (answerIndex !== -1) {
-                            presentCount++;
-                            tempAnswer[answerIndex] = null;
+                
+                if (classicModeEnabled) {
+                    const row = gameBoard.children[currentRow];
+                    const tiles = row.children;
+                    const answerCounts = {};
+                    answer.forEach(letter => (answerCounts[letter] = (answerCounts[letter] || 0) + 1));
+                    
+                    for (let i = 0; i < WORD_LENGTH; i++) {
+                        if (guess[i] === answer[i]) {
+                            applyTileState(tiles[i], 'correct', i);
+                            letterStates[guess[i]] = 'correct'; 
+                            answerCounts[guess[i]]--;
                         }
                     }
-                }
 
-                document.getElementById(`info-correct-${currentRow}`).textContent = correctCount;
-                document.getElementById(`info-present-${currentRow}`).textContent = presentCount;
+                    for (let i = 0; i < WORD_LENGTH; i++) {
+                        if (guess[i] !== answer[i]) {
+                            if (answer.includes(guess[i]) && answerCounts[guess[i]] > 0) {
+                                applyTileState(tiles[i], 'present', i);
+                                if (letterStates[guess[i]] !== 'correct') {
+                                    letterStates[guess[i]] = 'present';
+                                }
+                                answerCounts[guess[i]]--;
+                            } else {
+                                applyTileState(tiles[i], 'absent', i);
+                                if (!letterStates[guess[i]]) {
+                                    letterStates[guess[i]] = 'absent';
+                                }
+                            }
+                        }
+                    }
+                    
+                } else {
+                    // --- HURDLE MODE LOGIC ---
+                    let correctCount = 0;
+                    let presentCount = 0;
+                    let tempAnswer = [...answer];
+                    let tempGuess = [...guess];
+                    
+                    if (highlightKeysEnabled) {
+                         for (const letter of guess) { letterStates[letter] = 'used'; }
+                    }
+
+                    for (let i = 0; i < WORD_LENGTH; i++) {
+                        if (tempGuess[i] === tempAnswer[i]) {
+                            correctCount++;
+                            tempGuess[i] = null;
+                            tempAnswer[i] = null;
+                        }
+                    }
+
+                    for (let i = 0; i < WORD_LENGTH; i++) {
+                        if (tempGuess[i] !== null) {
+                            const answerIndex = tempAnswer.indexOf(tempGuess[i]);
+                            if (answerIndex !== -1) {
+                                presentCount++;
+                                tempAnswer[answerIndex] = null;
+                            }
+                        }
+                    }
+                    document.getElementById(`info-correct-${currentRow}`).textContent = correctCount;
+                    document.getElementById(`info-present-${currentRow}`).textContent = presentCount;
+                }
                 
+                // --- COMMON LOGIC ---
+                updateKeyboard(); 
+                previousGuess = currentGuess; // NEW: Store guess for next Hard Mode check
+
                 if (currentGuess === targetWord) {
                     showAnswerInHeader('win');
-                    setTimeout(() => alert(`You win! The word was ${targetWord.toUpperCase()}`), 100);
+                    setTimeout(() => showToast(`You win! The word was ${targetWord.toUpperCase()}`), 100);
                 } else if (currentRow === GUESS_COUNT - 1 && !settingInfinite.checked) {
                     showAnswerInHeader('lose');
-                    setTimeout(() => alert(`You lose! The word was ${targetWord.toUpperCase()}`), 100);
+                    setTimeout(() => showToast(`You lose! The word was ${targetWord.toUpperCase()}`), 100);
                 } else {
                     currentRow++;
                     currentGuess = "";
@@ -680,7 +967,7 @@
                 }
             }
             
-            // --- NEW: Call disclaimer on page load ---
+            // --- Call disclaimer on page load ---
             updateLengthDisclaimer();
         });
     </script>
