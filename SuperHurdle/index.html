@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hurdle</title>
     <script src="word_lists.js"></script>
+    <script src="common_words.js"></script>
 
     <style>
         :root {
@@ -37,7 +38,7 @@
 
         /* --- Settings Screen --- */
         #settings-screen {
-            display: flex;
+            display: flex; /* Will be hidden by loadGame() if save exists */
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -68,7 +69,6 @@
             margin-right: 10px;
         }
         
-        /* NEW: Disabled label style */
         .setting label.disabled {
             color: #999;
         }
@@ -92,6 +92,11 @@
             height: 1.2em; 
             margin-top: 5px;
             font-style: italic;
+        }
+        
+        #common-word-disclaimer {
+            height: auto;
+            margin-top: 2px;
         }
 
         .setting input[type="checkbox"] {
@@ -118,7 +123,7 @@
 
         /* --- Game Container --- */
         #game-container {
-            display: none;
+            display: none; /* Hidden by default */
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
@@ -242,7 +247,6 @@
             border-color: #565758;
         }
         
-        /* --- Classic Mode Tile Colors --- */
         .guess-tile.correct {
             background-color: var(--color-correct);
             border-color: var(--color-correct);
@@ -258,7 +262,6 @@
             border-color: var(--color-absent);
             color: white;
         }
-        /* --- Flip Animation --- */
         .flip {
             animation: flip 0.6s ease-out;
             animation-fill-mode: forwards;
@@ -269,7 +272,6 @@
             100% { transform: rotateX(0deg); }
         }
 
-        /* --- (Hurdle Mode Info Box) --- */
         .info-box {
             background-color: #cccccc;
             border-color: #878a8c;
@@ -284,7 +286,6 @@
             background-color: var(--color-present);
             border-color: var(--color-present);
         }
-        /* --- (Shake Animation) --- */
         .guess-row.shake {
             animation: shake 0.5s;
         }
@@ -333,7 +334,6 @@
             background-color: #c0c3c6;
         }
         
-        /* --- Keyboard Key States --- */
         .key.key-used {
             background-color: var(--color-absent);
             color: white;
@@ -351,7 +351,6 @@
             color: white;
         }
         
-        /* --- Toast Notification Styles --- */
         #toast-container {
             position: fixed;
             top: 20px;
@@ -394,6 +393,7 @@
                 <input type="number" id="setting-length" value="5" min="1" max="50">
             </div>
             <div id="length-disclaimer" class="setting-disclaimer"></div>
+            <div id="common-word-disclaimer" class="setting-disclaimer"></div> 
         </div>
         
         <div class="setting">
@@ -417,7 +417,7 @@
             <input type="checkbox" id="setting-classic-mode">
             <label for="setting-classic-mode">Classic Mode (Color Tiles)</label>
         </div>
-
+        
         <div class="setting setting-checkbox">
             <input type="checkbox" id="setting-hard-mode" disabled>
             <label for="setting-hard-mode" id="label-hard-mode" class="disabled">Hard Mode</label>
@@ -426,6 +426,11 @@
         <div class="setting setting-checkbox">
             <input type="checkbox" id="setting-highlight-keys" checked>
             <label for="setting-highlight-keys">Highlight Used Keys</label>
+        </div>
+        
+        <div class="setting setting-checkbox">
+            <input type="checkbox" id="setting-common-words">
+            <label for="setting-common-words">Common Words Only (for Answer)</label>
         </div>
         
         <button id="start-game-btn">Start Game</button>
@@ -447,19 +452,22 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
+            const SAVE_KEY = 'hurdleGameState'; // NEW: Key for localStorage
+
             // --- STATE ---
             let WORD_LENGTH = 5; 
             let GUESS_COUNT = 6; 
-            let TARGET_WORDS_BY_LENGTH = []; 
             let targetWord = "";
             let currentRow = 0;
             let currentGuess = "";
             let isGameOver = false;
             let highlightKeysEnabled = true;
             let classicModeEnabled = false; 
-            let hardModeEnabled = false; // NEW
-            let letterStates = {}; // RENAMED from keyStates
-            let previousGuess = ""; // NEW: For Hard Mode
+            let hardModeEnabled = false; 
+            let commonWordsEnabled = true;
+            let letterStates = {}; 
+            let previousGuess = ""; 
+            let guessHistory = []; // NEW: To store all guesses
 
             // --- ELEMENTS ---
             const settingsScreen = document.getElementById("settings-screen");
@@ -470,10 +478,12 @@
             const settingInfinite = document.getElementById("setting-infinite");
             const settingReveal = document.getElementById("setting-reveal");
             const settingClassicMode = document.getElementById("setting-classic-mode"); 
-            const settingHardMode = document.getElementById("setting-hard-mode"); // NEW
-            const labelHardMode = document.getElementById("label-hard-mode"); // NEW
+            const settingHardMode = document.getElementById("setting-hard-mode"); 
+            const labelHardMode = document.getElementById("label-hard-mode"); 
             const settingHighlightKeys = document.getElementById("setting-highlight-keys"); 
+            const settingCommonWords = document.getElementById("setting-common-words"); 
             const lengthDisclaimer = document.getElementById("length-disclaimer");
+            const commonWordDisclaimer = document.getElementById("common-word-disclaimer"); 
             
             const gameBoard = document.getElementById("game-board");
             const keyboard = document.getElementById("keyboard");
@@ -487,49 +497,141 @@
                 "a", "s", "d", "f", "g", "h", "j", "k", "l",
                 "enter", "z", "x", "c", "v", "b", "n", "m", "backspace"
             ];
+            
+            // --- NEW: Save/Load Functions ---
+            function saveGame() {
+                const state = {
+                    targetWord,
+                    guessHistory,
+                    letterStates,
+                    currentRow,
+                    isGameOver,
+                    WORD_LENGTH,
+                    GUESS_COUNT,
+                    classicModeEnabled,
+                    hardModeEnabled,
+                    highlightKeysEnabled,
+                    commonWordsEnabled,
+                    infiniteGuesses: settingInfinite.checked,
+                    canReveal: settingReveal.checked
+                };
+                localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+            }
 
+            function loadGame() {
+                const savedData = localStorage.getItem(SAVE_KEY);
+                if (!savedData) {
+                    // No save file, just show settings
+                    updateLengthDisclaimer();
+                    updateCommonWordDisclaimer();
+                    return; 
+                }
+
+                const state = JSON.parse(savedData);
+                
+                // Restore all game state
+                targetWord = state.targetWord;
+                guessHistory = state.guessHistory;
+                letterStates = state.letterStates;
+                currentRow = state.currentRow;
+                isGameOver = state.isGameOver;
+                WORD_LENGTH = state.WORD_LENGTH;
+                GUESS_COUNT = state.GUESS_COUNT;
+                classicModeEnabled = state.classicModeEnabled;
+                hardModeEnabled = state.hardModeEnabled;
+                highlightKeysEnabled = state.highlightKeysEnabled;
+                commonWordsEnabled = state.commonWordsEnabled;
+                
+                // Restore settings UI
+                settingLength.value = WORD_LENGTH;
+                settingGuesses.value = GUESS_COUNT;
+                settingInfinite.checked = state.infiniteGuesses;
+                settingReveal.checked = state.canReveal;
+                settingClassicMode.checked = classicModeEnabled;
+                settingHardMode.checked = hardModeEnabled;
+                settingHighlightKeys.checked = highlightKeysEnabled;
+                settingCommonWords.checked = commonWordsEnabled;
+                
+                // Manually trigger UI updates for disabled states
+                settingInfinite.dispatchEvent(new Event('change'));
+                settingClassicMode.dispatchEvent(new Event('change'));
+
+                // Hide settings, show game
+                settingsScreen.style.display = 'none';
+                gameContainer.style.display = 'flex';
+                
+                // Initialize UI and rebuild board
+                initGameUI(state.canReveal);
+                rebuildBoardFromHistory();
+                updateKeyboard();
+            }
+
+            function clearSavedGame() {
+                localStorage.removeItem(SAVE_KEY);
+            }
+
+            function rebuildBoardFromHistory() {
+                if (!guessHistory) return;
+                
+                // Temporarily set currentRow to 0 to rebuild
+                let tempRow = 0;
+                
+                for (const guess of guessHistory) {
+                    currentRow = tempRow; // Set global row for functions
+                    currentGuess = guess; // Set global guess for functions
+                    
+                    addNewGuessRow();
+                    updateGrid();
+                    runGuessLogic(guess); // Just colors/counts
+                    
+                    tempRow++;
+                }
+                
+                // Restore correct row number
+                currentRow = tempRow;
+                currentGuess = "";
+
+                if (isGameOver) {
+                    const lastGuess = guessHistory[guessHistory.length - 1];
+                    const winState = lastGuess === targetWord ? 'win' : 'lose';
+                    showAnswerInHeader(winState, true); // Re-show answer
+                } else {
+                    addNewGuessRow(); // Add the new empty row
+                }
+            }
+            
             // --- Toast Notification Function ---
             function showToast(message) {
                 const toast = document.createElement("div");
                 toast.classList.add("toast");
                 toast.textContent = message;
                 toastContainer.appendChild(toast);
-
                 setTimeout(() => { toast.classList.add("show"); }, 10); 
-
                 setTimeout(() => {
                     toast.classList.remove("show");
                     toast.addEventListener("transitionend", () => {
-                        if (toast.parentElement) {
-                            toast.parentElement.removeChild(toast);
-                        }
+                        if (toast.parentElement) toast.parentElement.removeChild(toast);
                     }, { once: true });
                 }, 2000); 
             }
 
-            // --- Disclaimer Function ---
+            // --- Disclaimer Functions ---
             function updateLengthDisclaimer() {
                 const length = parseInt(settingLength.value, 10);
                 let count = 0;
-                
-                if (length > 0 && WORD_LISTS[length]) {
-                    count = WORD_LISTS[length].size;
-                }
-
-                let message = `(${count} words found)`;
-                if (count === 0) {
-                    message = "Warning: 0 words of this length!";
-                } else if (count < 5) {
-                    message = `Warning: Only ${count} words!`;
-                } else if (count < 10) {
-                    message = `Warning: Only ${count} words.`;
-                } else if (count < 15) {
-                    message = `Note: Only ${count} words.`;
-                } else if (count < 25) {
-                    message = `Note: ${count} words.`;
-                }
-                
+                if (length > 0 && WORD_LISTS[length]) count = WORD_LISTS[length].size;
+                let message = `(${count} total words found)`;
+                if (count === 0) message = "Warning: 0 total words of this length!";
+                else if (count < 25) message = `Note: Only ${count} total words.`;
                 lengthDisclaimer.textContent = message;
+            }
+            
+            function updateCommonWordDisclaimer() {
+                const length = parseInt(settingLength.value, 10);
+                let count = 0;
+                if (length > 0 && COMMON_WORD_LISTS[length]) count = COMMON_WORD_LISTS[length].size;
+                if (count === 0) commonWordDisclaimer.textContent = "Note: No common answer words found for this length.";
+                else commonWordDisclaimer.textContent = `(${count} common answer words found)`;
             }
             
             // --- SETTINGS UI LISTENERS ---
@@ -537,18 +639,19 @@
                 settingGuesses.disabled = settingInfinite.checked;
             });
             
-            settingLength.addEventListener("input", updateLengthDisclaimer); 
+            settingLength.addEventListener("input", () => {
+                updateLengthDisclaimer();
+                updateCommonWordDisclaimer();
+            }); 
 
             settingClassicMode.addEventListener("change", () => {
                 if (settingClassicMode.checked) {
                     settingHighlightKeys.checked = true;
                     settingHighlightKeys.disabled = true;
-                    // NEW: Enable Hard Mode
                     settingHardMode.disabled = false;
                     labelHardMode.classList.remove("disabled");
                 } else {
                     settingHighlightKeys.disabled = false;
-                    // NEW: Disable and uncheck Hard Mode
                     settingHardMode.checked = false;
                     settingHardMode.disabled = true;
                     labelHardMode.classList.add("disabled");
@@ -556,18 +659,20 @@
             });
 
             newGameBtn.addEventListener("click", () => {
+                clearSavedGame(); // NEW
                 gameContainer.style.display = 'none';
                 settingsScreen.style.display = 'flex';
                 updateLengthDisclaimer(); 
+                updateCommonWordDisclaimer(); 
             });
 
-            // --- START GAME ---
+            // --- START GAME (NEW GAME) ---
             startGameBtn.addEventListener("click", () => {
-                // 1. Get Settings
-                const isInfinite = settingInfinite.checked;
-                const canReveal = settingReveal.checked;
+                clearSavedGame(); // NEW: Starting a new game
+                
                 classicModeEnabled = settingClassicMode.checked;
-                hardModeEnabled = settingHardMode.checked; // NEW
+                hardModeEnabled = settingHardMode.checked;
+                commonWordsEnabled = settingCommonWords.checked;
                 
                 if (classicModeEnabled) {
                     highlightKeysEnabled = true;
@@ -578,7 +683,7 @@
                 let length = parseInt(settingLength.value, 10);
                 WORD_LENGTH = (length >= 1 && length <= 50) ? length : 5; 
                 
-                if (isInfinite) {
+                if (settingInfinite.checked) {
                     GUESS_COUNT = 999;
                 } else {
                     let guesses = parseInt(settingGuesses.value, 10);
@@ -590,6 +695,26 @@
                     return;
                 }
                 
+                if (commonWordsEnabled && (!COMMON_WORD_LISTS[WORD_LENGTH] || COMMON_WORD_LISTS[WORD_LENGTH].size === 0)) {
+                    showToast(`No common words of length ${WORD_LENGTH} found. Using full list.`);
+                    commonWordsEnabled = false; // Fallback
+                }
+
+                settingsScreen.style.display = 'none';
+                gameContainer.style.display = 'flex';
+                
+                initGame(settingReveal.checked); // Pass canReveal
+            });
+            
+            // --- NEW: initGameUI (Builds UI for new or loaded game) ---
+            function initGameUI(canReveal) {
+                gameBoard.innerHTML = ''; 
+                keyboard.innerHTML = ''; 
+                
+                titleElement.innerHTML = 'HURDLE';
+                titleElement.classList.remove('title-win', 'title-lose');
+                
+                // Set board sizing
                 gameBoard.classList.remove('length-large', 'length-xlarge');
                 if (WORD_LENGTH > 20) {
                     gameBoard.classList.add('length-xlarge');
@@ -597,55 +722,30 @@
                     gameBoard.classList.add('length-large');
                 }
 
-                settingsScreen.style.display = 'none';
-                gameContainer.style.display = 'flex';
-                
-                initGame(canReveal);
-            });
-
-            // --- INITIALIZATION ---
-            function initGame(canReveal) {
-                gameBoard.innerHTML = ''; 
-                currentRow = 0;
-                currentGuess = "";
-                previousGuess = ""; // NEW: Reset previous guess
-                isGameOver = false;
-                letterStates = {}; // RENAMED
-
-                titleElement.innerHTML = 'HURDLE';
-                titleElement.classList.remove('title-win', 'title-lose');
-                
+                // Show buttons
                 newGameBtn.style.display = 'block'; 
-                if (canReveal) {
+                if (canReveal && !isGameOver) { // Only show reveal if game isn't over
                     revealAnswerBtn.style.display = 'block';
                 } else {
                     revealAnswerBtn.style.display = 'none';
                 }
 
-                keyboard.innerHTML = ''; 
+                // Create keyboard
                 const row1 = document.createElement("div");
                 row1.className = "keyboard-row";
                 keysLayout.slice(0, 10).forEach(key => row1.appendChild(createKey(key)));
-                
                 const row2 = document.createElement("div");
                 row2.className = "keyboard-row";
                 row2.style.paddingLeft = "25px";
                 keysLayout.slice(10, 19).forEach(key => row2.appendChild(createKey(key)));
-
                 const row3 = document.createElement("div");
                 row3.className = "keyboard-row";
                 keysLayout.slice(19).forEach(key => row3.appendChild(createKey(key)));
-
                 keyboard.appendChild(row1);
                 keyboard.appendChild(row2);
                 keyboard.appendChild(row3);
                 
-                updateKeyboard(); 
-
-                TARGET_WORDS_BY_LENGTH = Array.from(WORD_LISTS[WORD_LENGTH]);
-                targetWord = TARGET_WORDS_BY_LENGTH[Math.floor(Math.random() * TARGET_WORDS_BY_LENGTH.length)];
-                console.log("Target Word:", targetWord);
-
+                // Add Event Listeners
                 document.removeEventListener("keydown", handlePhysicalKey);
                 keyboard.removeEventListener("click", handleVirtualKey);
                 revealAnswerBtn.removeEventListener("click", handleRevealAnswer);
@@ -653,11 +753,34 @@
                 document.addEventListener("keydown", handlePhysicalKey);
                 keyboard.addEventListener("click", handleVirtualKey);
                 revealAnswerBtn.addEventListener("click", handleRevealAnswer);
+            }
+
+            // --- MODIFIED: initGame (For NEW game only) ---
+            function initGame(canReveal) {
+                // Reset state
+                currentRow = 0;
+                currentGuess = "";
+                previousGuess = "";
+                isGameOver = false;
+                letterStates = {}; 
+                guessHistory = [];
+
+                initGameUI(canReveal); // Build the UI
                 
-                addNewGuessRow();
+                // --- Word Selection ---
+                const wordListToUse = (commonWordsEnabled && COMMON_WORD_LISTS[WORD_LENGTH].size > 0)
+                    ? COMMON_WORD_LISTS[WORD_LENGTH] 
+                    : WORD_LISTS[WORD_LENGTH];
+                    
+                let tempArray = Array.from(wordListToUse);
+                targetWord = tempArray[Math.floor(Math.random() * tempArray.length)];
+                console.log("Target Word:", targetWord);
+                
+                addNewGuessRow(); // Add first empty row
+                saveGame(); // Save the initial state
             }
             
-            function showAnswerInHeader(state) {
+            function showAnswerInHeader(state, isRebuild = false) {
                 const NewHtml = '<a href="https://en.wiktionary.org/wiki/' + targetWord + '" target="_blank">' + targetWord + '</a>';
                 titleElement.innerHTML = NewHtml.toLowerCase();
                 
@@ -669,7 +792,10 @@
                     titleElement.classList.add('title-lose');
                 }
                 
-                isGameOver = true;
+                if (!isRebuild) { // Only clear save if it's not a rebuild
+                    isGameOver = true;
+                    clearSavedGame(); 
+                }
                 revealAnswerBtn.style.display = 'none'; 
             }
 
@@ -758,15 +884,13 @@
                 });
             }
 
-            // --- NEW: Hard Mode Validation ---
             function isValidHardModeGuess() {
                 if (!hardModeEnabled || currentRow === 0) {
-                    return true; // Not in hard mode or first guess
+                    return true; 
                 }
                 
                 const guess = currentGuess.split('');
 
-                // Rule 1: Check for 'correct' letters
                 for (let i = 0; i < WORD_LENGTH; i++) {
                     const letter = previousGuess[i];
                     if (letterStates[letter] === 'correct' && guess[i] !== letter) {
@@ -775,7 +899,6 @@
                     }
                 }
 
-                // Rule 2: Check for 'present' letters
                 const presentLetters = Object.keys(letterStates).filter(k => letterStates[k] === 'present');
                 for (const letter of presentLetters) {
                     if (!guess.includes(letter)) {
@@ -840,10 +963,8 @@
                     return;
                 }
                 
-                // --- NEW: Hard Mode Check ---
                 if (!isValidHardModeGuess()) {
                     shakeRow();
-                    // Toast is shown by isValidHardModeGuess()
                     return;
                 }
                 
@@ -879,11 +1000,12 @@
                     }, { once: true });
                 }
             }
-
-            function revealGuess() {
-                const guess = currentGuess.split('');
+            
+            // --- NEW: runGuessLogic (separated from revealGuess) ---
+            function runGuessLogic(guessString) {
+                const guess = guessString.split('');
                 const answer = targetWord.split('');
-                
+
                 if (classicModeEnabled) {
                     const row = gameBoard.children[currentRow];
                     const tiles = row.children;
@@ -897,7 +1019,6 @@
                             answerCounts[guess[i]]--;
                         }
                     }
-
                     for (let i = 0; i < WORD_LENGTH; i++) {
                         if (guess[i] !== answer[i]) {
                             if (answer.includes(guess[i]) && answerCounts[guess[i]] > 0) {
@@ -914,7 +1035,6 @@
                             }
                         }
                     }
-                    
                 } else {
                     // --- HURDLE MODE LOGIC ---
                     let correctCount = 0;
@@ -925,7 +1045,6 @@
                     if (highlightKeysEnabled) {
                          for (const letter of guess) { letterStates[letter] = 'used'; }
                     }
-
                     for (let i = 0; i < WORD_LENGTH; i++) {
                         if (tempGuess[i] === tempAnswer[i]) {
                             correctCount++;
@@ -933,7 +1052,6 @@
                             tempAnswer[i] = null;
                         }
                     }
-
                     for (let i = 0; i < WORD_LENGTH; i++) {
                         if (tempGuess[i] !== null) {
                             const answerIndex = tempAnswer.indexOf(tempGuess[i]);
@@ -946,10 +1064,16 @@
                     document.getElementById(`info-correct-${currentRow}`).textContent = correctCount;
                     document.getElementById(`info-present-${currentRow}`).textContent = presentCount;
                 }
+            }
+
+            // --- MODIFIED: revealGuess (now handles game flow) ---
+            function revealGuess() {
+                const guess = currentGuess;
+                guessHistory.push(guess); // Add to history
                 
-                // --- COMMON LOGIC ---
+                runGuessLogic(guess); // Run the logic
                 updateKeyboard(); 
-                previousGuess = currentGuess; // NEW: Store guess for next Hard Mode check
+                previousGuess = guess; 
 
                 if (currentGuess === targetWord) {
                     showAnswerInHeader('win');
@@ -958,17 +1082,18 @@
                     showAnswerInHeader('lose');
                     setTimeout(() => showToast(`You lose! The word was ${targetWord.toUpperCase()}`), 100);
                 } else {
+                    // Continue game
                     currentRow++;
                     currentGuess = "";
-                    
                     if (currentRow < GUESS_COUNT) {
                         addNewGuessRow();
                     }
+                    saveGame(); // Save progress
                 }
             }
             
-            // --- Call disclaimer on page load ---
-            updateLengthDisclaimer();
+            // --- Initial Page Load ---
+            loadGame();
         });
     </script>
 </body>
