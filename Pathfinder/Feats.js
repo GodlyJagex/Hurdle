@@ -3673,7 +3673,7 @@ const featData = {
         {
             "id": "Touch of Serenity",
             "group": "Combat",
-            "prereqs": "Wis 18, Unarmed Strike, Improved, BAB +8"
+            "prereqs": "Wis 18, Improved Unarmed Strike, BAB +8"
         },
         {
             "id": "Tower Shield Proficiency",
@@ -3791,7 +3791,7 @@ const featData = {
             "prereqs": "Double Slice, Improved Two-Weapon Fighting, BAB +11"
         },
         {
-            "id": "Unarmed Strike, Improved",
+            "id": "Improved Unarmed Strike",
             "group": "Combat",
             "prereqs": "—"
         },
