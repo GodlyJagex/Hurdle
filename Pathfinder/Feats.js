@@ -1436,17 +1436,17 @@ const featData = {
             "prereqs": "Dex 15, flurry of blows class feature, Combat Expertise"
         },
         {
-            "id": "Feint, Greater",
+            "id": "Greater Feint",
             "group": "Combat",
             "prereqs": "Improved Feint, BAB +6"
         },
         {
-            "id": "Feinting Flurry, Improved",
+            "id": "Improved Feinting Flurry",
             "group": "Combat",
             "prereqs": "Dex 17, flurry of blows class feature, Combat Expertise, Feinting Flurry, BAB +6"
         },
         {
-            "id": "Feint, Improved",
+            "id": "Improved Feint",
             "group": "Combat",
             "prereqs": "Combat Expertise"
         },
