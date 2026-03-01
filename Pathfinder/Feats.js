@@ -811,67 +811,67 @@ const featData = {
             "prereqs": "BAB +9"
         },
         {
-            "id": "Critical, Banishing",
+            "id": "Banishing Critical (Original)",
             "group": "Combat",
             "prereqs": "Critical Focus, ability to cast dismissal or banishment, CL 9"
         },
         {
-            "id": "Critical, Banishing",
+            "id": "Banishing Critical (Newer)",
             "group": "Combat",
             "prereqs": "Arcane Strike or Disruptive; Spellcraft 8 ranks; arcane pool class feature."
         },
         {
-            "id": "Critical, Bleeding",
+            "id": "Bleeding Critical",
             "group": "Combat",
             "prereqs": "Critical Focus, BAB +11"
         },
         {
-            "id": "Critical, Blinding",
+            "id": "Binding Critical",
             "group": "Combat",
             "prereqs": "Critical Focus, BAB +15"
         },
         {
-            "id": "Critical, Censoring",
+            "id": "Censoring Critical",
             "group": "Combat",
             "prereqs": "Critical Focus, BAB +15."
         },
         {
-            "id": "Critical, Crippling",
+            "id": "Crippling Critical",
             "group": "Combat",
             "prereqs": "Critical Focus, BAB +13"
         },
         {
-            "id": "Critical, Deafening",
+            "id": "Deafening Critical",
             "group": "Combat",
             "prereqs": "Critical Focus, BAB +13"
         },
         {
-            "id": "Critical, Exhausting",
+            "id": "Exhausting Critical",
             "group": "Combat",
             "prereqs": "Tiring Critical, BAB +15"
         },
         {
-            "id": "Critical, Sickening",
+            "id": "Sickening Critical",
             "group": "Combat",
             "prereqs": "Critical Focus, BAB +11"
         },
         {
-            "id": "Critical, Staggering",
+            "id": "Staggering Critical",
             "group": "Combat",
             "prereqs": "Critical Focus, BAB +13"
         },
         {
-            "id": "Critical, Stunning",
+            "id": "Stunning Critical",
             "group": "Combat",
             "prereqs": "Staggering Critical, BAB +17"
         },
         {
-            "id": "Critical, Tiring",
+            "id": "Tiring Critical",
             "group": "Combat",
             "prereqs": "Critical Focus, BAB +13"
         },
         {
-            "id": "Critical, Improved",
+            "id": "Improved Critical",
             "group": "Combat",
             "prereqs": "Proficient with weapon, bab +8"
         },
@@ -5970,12 +5970,12 @@ const featData = {
         {
             "id": "Gravitational Vital Strike",
             "group": "General",
-            "prereqs": "Vital Strike; Heavy Gravity Acclimation* or Light"
+            "prereqs": "Vital Strike, Heavy Gravity Acclimation* or Light"
         },
         {
             "id": "Gravity Acclimation*",
             "group": "General",
-            "prereqs": "Heavy Gravity Acclimation Str 17 or Endurance"
+            "prereqs": "Heavy Gravity Acclimation, Str 17 or Endurance"
         },
         {
             "id": "Great Fortitude",
@@ -9276,7 +9276,7 @@ const featData = {
         {
             "id": "Forge Ring",
             "group": "Item Creation",
-            "prereqs": "CL 7th"
+            "prereqs": "CL 7"
         },
         {
             "id": "Grisly Ornament",
