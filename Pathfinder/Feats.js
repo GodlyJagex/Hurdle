@@ -3881,12 +3881,12 @@ const featData = {
             "prereqs": "BAB +6"
         },
         {
-            "id": "Vital Strike, Improved",
+            "id": "Improved Vital Strike",
             "group": "Combat",
             "prereqs": "Vital Strike, BAB +11"
         },
         {
-            "id": "Vital Strike, Greater",
+            "id": "Greater Vital Strike",
             "group": "Combat",
             "prereqs": "Improved Vital Strike, BAB +16"
         },
