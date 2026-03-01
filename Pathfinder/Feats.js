@@ -1811,11 +1811,6 @@ const featData = {
             "prereqs": "Str 13, Awesome Blow or awesome blow class feature, Power Attack"
         },
         {
-            "id": "Improved Critical",
-            "group": "Combat",
-            "prereqs": "Proficient with weapon, bab +8"
-        },
-        {
             "id": "Improved Hunter’s Bond",
             "group": "Combat",
             "prereqs": "Hunter’s bond (companions) class feature, ranger level 6th"
