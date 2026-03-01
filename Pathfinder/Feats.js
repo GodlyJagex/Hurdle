@@ -1671,12 +1671,12 @@ const featData = {
             "prereqs": "Dex 13, Agile Maneuvers, Improved Steal, Sleight of Hand 3 ranks"
         },
         {
-            "id": "Grapple, Improved",
+            "id": "Improved Grapple",
             "group": "Combat",
             "prereqs": "Dex 13, Improved Unarmed Strike"
         },
         {
-            "id": "Grapple, Greater",
+            "id": "Greater Grapple",
             "group": "Combat",
             "prereqs": "Improved Grapple, BAB +6"
         },
@@ -9305,3 +9305,4 @@ const featData = {
         },
     ]
 };
+
