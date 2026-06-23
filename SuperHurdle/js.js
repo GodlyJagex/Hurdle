@@ -382,7 +382,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let row = document.createElement("div");
         row.className = "guess-row";
         
-        if (classicModeEnabled) {
+        if (Enabled) {
             row.style.gridTemplateColumns = `repeat(${WORD_LENGTH}, 1fr)`;
         } else {
             row.style.gridTemplateColumns = `repeat(${WORD_LENGTH}, 1fr) 0.5fr 0.5fr`;
@@ -395,7 +395,7 @@ document.addEventListener("DOMContentLoaded", () => {
             row.appendChild(tile);
         }
         
-        if (!classicModeEnabled) {
+        if (!Enabled) {
             let correctInfoBox = document.createElement("div");
             correctInfoBox.className = "info-box correct-info";
             correctInfoBox.id = `info-correct-${boardIndex}-${currentRow}`;
@@ -460,7 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
             keyElement.classList.remove('key-used', 'correct', 'present', 'absent');
             const state = mergedStates[letter]; 
 
-            if (classicModeEnabled) {
+            if (Enabled) {
                 if (state === 'correct') keyElement.classList.add('correct');
                 else if (state === 'present') keyElement.classList.add('present');
                 else if (state === 'absent') keyElement.classList.add('absent');
@@ -602,11 +602,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const answer = targetWords[boardIndex].split('');
         const letterStates = allLetterStates[boardIndex];
 
-        if (classicModeEnabled) {
-            const miniBoard = document.getElementById(`mini-board-${boardIndex}`);
-            const row = miniBoard.children[currentRow];
-            if (!row) return;
-            const tiles = row.children;
+if (classicModeEnabled) {
+    const miniBoard = document.getElementById(`mini-board-${boardIndex}`);
+    // Select only from elements that are actual guess rows
+    const rows = miniBoard.getElementsByClassName("guess-row");
+    const row = rows[currentRow]; 
+    if (!row) return;
+    const tiles = row.children;
             const answerCounts = {};
             answer.forEach(letter => (answerCounts[letter] = (answerCounts[letter] || 0) + 1));
             
