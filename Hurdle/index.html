@@ -1,24 +1,399 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <title>Hurdle</title>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale = 1.0">
-    <link href="css.css" rel="stylesheet" type="text/css">
-  </head>
-  <body>
-    <h1 id="title">Hurdle</h1>
-    <hr>
-  <table align='center' id="table" border="1">
-		<tbody>
-		</tbody>
-	</table>
-    <br>
-     <br>
-      <br>
-       <br>
-        <br>
-    <Button onclick="Cheat()">Cheat</Button>
-  </body>
-	<script src="words.js"></script>
-  <script src="java.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hurdle</title>
+    <script src="js.js"></script>
+    <script src="word_lists.js"></script>
+    <style>
+        :root {
+            --color-correct: #6aaa64;
+            --color-present: #c9b458;
+            --color-absent: #787c7e;
+            --color-key-bg: #d3d6da;
+            --color-border: #d3d6da;
+            --color-tile-border: #878a8c;
+            --color-info-text: #000000;
+            --color-reveal-btn: #dc3545;
+            --color-new-game-btn: #007bff;
+            --color-disclaimer: #888;
+            --color-toast-bg: #333;
+            --color-toast-text: #fff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 95vh;
+            margin: 0;
+            overflow-y: auto; 
+            overflow-x: hidden;
+        }
+
+        /* --- Settings Screen --- */
+        #settings-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        #settings-screen h2 { margin-top: 0; }
+        .setting {
+            margin: 10px 0;
+            font-size: 1.2rem;
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+        }
+        .setting-row { display: flex; align-items: center; }
+        .setting label { margin-right: 10px; }
+        .setting label.disabled { color: #999; }
+        .setting input[type="number"], .setting select {
+            width: 70px;
+            padding: 5px;
+            font-size: 1.1rem;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+        }
+        .setting input[type="number"]:disabled {
+            background-color: #eee;
+            color: #999;
+        }
+        .setting-disclaimer {
+            font-size: 0.9rem;
+            color: var(--color-disclaimer);
+            height: 1.2em; 
+            margin-top: 5px;
+            font-style: italic;
+        }
+        #common-word-disclaimer { height: auto; margin-top: 2px; }
+        .setting input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+        .setting.setting-checkbox { flex-direction: row; }
+        #start-game-btn {
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            background-color: var(--color-correct);
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        /* --- Game Container --- */
+        #game-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            height: 95vh;
+        }
+        header {
+            position: relative;
+            border-bottom: 1px solid var(--color-border);
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+            flex-shrink: 0;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+        }
+        header h1 a { text-decoration: none; font-weight: bold; }
+        header h1 a:hover { text-decoration: underline; }
+        .title-win a { color: var(--color-correct); }
+        .title-lose a { color: var(--color-reveal-btn); }
+        #new-game-btn {
+            display: none; 
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+            background-color: var(--color-new-game-btn);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #reveal-answer-btn {
+            display: none;
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+            background-color: var(--color-reveal-btn);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* --- MODIFIED: Board Wrapper (Vertical Scroll) --- */
+        #board-wrapper {
+            width: 100%;
+            overflow-y: auto; /* Allow VERTICAL scroll */
+            overflow-x: hidden; /* Prevent HORIZONTAL scroll */
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            flex-grow: 1;
+        }
+        
+        /* --- MODIFIED: Game Board (Flex Wrap) --- */
+        #game-board {
+            display: flex;
+            flex-wrap: wrap; /* This is the key change */
+            justify-content: center; /* Center the boards */
+            align-items: flex-start;
+            gap: 15px; /* Replaces grid-gap */
+            padding: 10px;
+            box-sizing: border-box;
+            max-width: 100%; /* Ensure it doesn't overflow wrapper */
+        }
+        
+        /* --- REMOVED: All .game-count-* CSS rules --- */
+
+        /* --- MODIFIED: Mini Board (Contrast) --- */
+        .mini-board {
+            display: flex;
+            flex-direction: column;
+            grid-gap: 5px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px; /* Increased padding */
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: 8px; /* Added margin for spacing */
+        }
+        .mini-board.solved {
+            opacity: 0.6;
+            background: #f8f8f8;
+        }
+
+        .guess-row { display: grid; grid-gap: 5px; }
+
+        /* --- MODIFIED: Tile Sizing (One Size) --- */
+        .guess-tile, .info-box {
+            width: 55px; 
+            height: 55px;
+            font-size: 2.2rem;
+            border: 2px solid var(--color-tile-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-sizing: border-box;
+        }
+        
+        /* --- REMOVED: All responsive tile sizing classes --- */
+
+        
+        /* --- Tile States --- */
+        .guess-tile.filled { border-color: #565758; }
+        .guess-tile.correct { background-color: var(--color-correct); border-color: var(--color-correct); color: white; }
+        .guess-tile.present { background-color: var(--color-present); border-color: var(--color-present); color: white; }
+        .guess-tile.absent { background-color: var(--color-absent); border-color: var(--color-absent); color: white; }
+        .flip { animation: flip 0.6s ease-out; animation-fill-mode: forwards; }
+        @keyframes flip {
+            0%   { transform: rotateX(0deg); }
+            50%  { transform: rotateX(90deg); }
+            100% { transform: rotateX(0deg); }
+        }
+        .info-box { background-color: #cccccc; border-color: #878a8c; color: var(--color-info-text); font-size: 2rem; }
+        .info-box.correct-info { background-color: var(--color-correct); border-color: var(--color-correct); }
+        .info-box.present-info { background-color: var(--color-present); border-color: var(--color-present); }
+        .guess-row.shake { animation: shake 0.5s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        /* --- Keyboard --- */
+        #keyboard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-top: 10px;
+            flex-shrink: 0;
+        }
+        .keyboard-row { display: flex; justify-content: center; margin: 4px 0; }
+        .key {
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 0;
+            margin: 0 3px;
+            height: 58px;
+            border-radius: 4px;
+            border: none;
+            background-color: var(--color-key-bg);
+            color: #000;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+            min-width: 43px;
+        }
+        .key.large { min-width: 65px; }
+        .key:hover { background-color: #c0c3c6; }
+        
+        .key.key-used { background-color: var(--color-absent); color: white; }
+        .key.correct { background-color: var(--color-correct); color: white; }
+        .key.present { background-color: var(--color-present); color: white; }
+        .key.absent { background-color: var(--color-absent); color: white; }
+        
+        /* --- Toast Notifications --- */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1000;
+        }
+        .toast {
+            background-color: var(--color-toast-bg);
+            color: var(--color-toast-text);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .answer-container {
+    text-align: center;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    font-size: 1.2rem;
+}
+
+.answer-container a {
+    color: var(--color-correct);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.answer-container a:hover {
+    text-decoration: underline;
+}
+
+    </style>
+</head>
+<body>
+
+    <div id="settings-screen">
+        <h2>Settings</h2>
+        
+        <div class="setting">
+            <div class="setting-row">
+                <label for="setting-game-count">Game Count:</label>
+                <select id="setting-game-count">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="10">10</option>
+                    <option value="16">16</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="setting">
+            <div class="setting-row">
+                <label for="setting-length">Word Length:</label>
+                <input type="number" id="setting-length" value="5" min="1" max="50">
+            </div>
+            <div id="length-disclaimer" class="setting-disclaimer"></div>
+            <div id="common-word-disclaimer" class="setting-disclaimer"></div> 
+        </div>
+        
+        <div class="setting">
+            <div class="setting-row">
+                <label for="setting-guesses">Number of Guesses:</label>
+                <input type="number" id="setting-guesses" value="6" min="1" max="10">
+            </div>
+        </div>
+        
+        <div class="setting setting-checkbox">
+            <input type="checkbox" id="setting-infinite">
+            <label for="setting-infinite">Infinite Guesses</label>
+        </div>
+        
+        <div class="setting setting-checkbox">
+            <input type="checkbox" id="setting-reveal">
+            <label for="setting-reveal">Enable Reveal Button</label>
+        </div>
+        
+        <div class="setting setting-checkbox">
+            <input type="checkbox" id="setting-classic-mode">
+            <label for="setting-classic-mode">Classic Mode (Color Tiles)</label>
+        </div>
+        
+        <div class="setting setting-checkbox">
+            <input type="checkbox" id="setting-hard-mode" disabled>
+            <label for="setting-hard-mode" id="label-hard-mode" class="disabled">Hard Mode</label>
+        </div>
+        
+        <div class="setting setting-checkbox">
+            <input type="checkbox" id="setting-highlight-keys" checked>
+            <label for="setting-highlight-keys">Highlight Used Keys</label>
+        </div>
+        
+        <button id="start-game-btn">Start Game</button>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <div id="game-container">
+        <header>
+            <button id="new-game-btn">New Game</button>
+            <h1 id="title">HURDLE</h1>
+            <button id="reveal-answer-btn">Reveal Answer</button>
+        </header>
+        
+        <div id="board-wrapper">
+            <div id="game-board"></div>
+        </div>
+
+        <div id="keyboard"></div>
+    </div>
+
+</body>
 </html>
