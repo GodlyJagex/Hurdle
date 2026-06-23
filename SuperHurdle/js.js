@@ -382,7 +382,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let row = document.createElement("div");
         row.className = "guess-row";
         
-        if (Enabled) {
+        // FIX: Replaced Enabled with classicModeEnabled
+        if (classicModeEnabled) {
             row.style.gridTemplateColumns = `repeat(${WORD_LENGTH}, 1fr)`;
         } else {
             row.style.gridTemplateColumns = `repeat(${WORD_LENGTH}, 1fr) 0.5fr 0.5fr`;
@@ -395,7 +396,8 @@ document.addEventListener("DOMContentLoaded", () => {
             row.appendChild(tile);
         }
         
-        if (!Enabled) {
+        // FIX: Replaced Enabled with classicModeEnabled
+        if (!classicModeEnabled) {
             let correctInfoBox = document.createElement("div");
             correctInfoBox.className = "info-box correct-info";
             correctInfoBox.id = `info-correct-${boardIndex}-${currentRow}`;
@@ -460,7 +462,8 @@ document.addEventListener("DOMContentLoaded", () => {
             keyElement.classList.remove('key-used', 'correct', 'present', 'absent');
             const state = mergedStates[letter]; 
 
-            if (Enabled) {
+            // FIX: Replaced Enabled with classicModeEnabled
+            if (classicModeEnabled) {
                 if (state === 'correct') keyElement.classList.add('correct');
                 else if (state === 'present') keyElement.classList.add('present');
                 else if (state === 'absent') keyElement.classList.add('absent');
@@ -586,29 +589,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function shakeRow(boardIndex) {
-        const miniBoard = document.getElementById(`mini-board-${boardIndex}`);
-        if (!miniBoard) return;
-        const row = miniBoard.children[currentRow];
-        if (row) {
-            row.classList.add("shake");
-            row.addEventListener("animationend", () => {
-                row.classList.remove("shake");
-            }, { once: true });
-        }
+    const miniBoard = document.getElementById(`mini-board-${boardIndex}`);
+    if (!miniBoard) return;
+    const rows = miniBoard.getElementsByClassName("guess-row");
+    const row = rows[currentRow];
+    if (row) {
+        row.classList.add("shake");
+        row.addEventListener("animationend", () => {
+            row.classList.remove("shake");
+        }, { once: true });
     }
+}
     
     function runGuessLogic(guessString, boardIndex) {
         const guess = guessString.split('');
         const answer = targetWords[boardIndex].split('');
         const letterStates = allLetterStates[boardIndex];
 
-if (classicModeEnabled) {
-    const miniBoard = document.getElementById(`mini-board-${boardIndex}`);
-    // Select only from elements that are actual guess rows
-    const rows = miniBoard.getElementsByClassName("guess-row");
-    const row = rows[currentRow]; 
-    if (!row) return;
-    const tiles = row.children;
+        if (classicModeEnabled) {
+            const miniBoard = document.getElementById(`mini-board-${boardIndex}`);
+   
+            const rows = miniBoard.getElementsByClassName("guess-row");
+            const row = rows[currentRow];
+            if (!row) return;
+            const tiles = row.children;
             const answerCounts = {};
             answer.forEach(letter => (answerCounts[letter] = (answerCounts[letter] || 0) + 1));
             
